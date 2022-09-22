@@ -59,6 +59,7 @@ module.exports = (env,argv) => {
   },
 
   // ...the rest of your config
+
   module: {
     rules: [
       babelLoaderConfiguration,
@@ -95,3 +96,4 @@ module.exports = (env,argv) => {
   },
   };
 }
+
