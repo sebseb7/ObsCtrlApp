@@ -24,8 +24,9 @@ import {
 } from 'react-native';
 
 import Geolocation from '@react-native-community/geolocation';
+import { v4 as uuidv4 } from 'uuid';
 
-var uniqueId = Math.random();
+var uniqueId = uuidv4();
 
 console.log('UID',uniqueId);
 const io = require("socket.io-client");
@@ -511,7 +512,7 @@ const confirmText = () => {
 
 
 function connectSocket() {
-socket = io("wss://"+storage_data.ws+":3334");
+socket = io("wss://"+storage_data.ws+":3334", { transports: ["websocket"] });
 console.log('connecting');
 socket.on('connect', () => {
 	console.log('conneced');
