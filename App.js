@@ -25,15 +25,7 @@ import {
 
 import Geolocation from '@react-native-community/geolocation';
 
-import DeviceInfo from 'react-native-device-info';
-
 var uniqueId = Math.random();
-
-DeviceInfo.getUniqueId().then((uId) => {
-	uniqueId=uId;
-},(error) => {
-    console.error(error); // Stacktrace
-});
 
 console.log('UID',uniqueId);
 const io = require("socket.io-client");
@@ -66,6 +58,7 @@ var socket_counter = 0;
 var gps_active = false;
 
 
+var setLoggedInG;
 var setMapColG;
 var setMap2ColG;
 var setRecColG;
@@ -105,7 +98,7 @@ const socketSrt1mute = () => {
 		if(socket.connected){
 			socket.emit('srt1muteOff',uniqueId);
 			srt1mute=false;
-			setSrt1muteColG('#000');
+			setSrt1muteColG('');
 		}
 	}else{
 		if(socket.connected){
@@ -120,7 +113,7 @@ const socketSrt2mute = () => {
 		if(socket.connected){
 			socket.emit('srt2muteOff',uniqueId);
 			srt2mute=false;
-			setSrt2muteColG('#000');
+			setSrt2muteColG('');
 		}
 	}else{
 		if(socket.connected){
@@ -516,11 +509,19 @@ const confirmText = () => {
 	}
 }
 
-socket = io("wss://---------------------:3334");
+
+function connectSocket() {
+socket = io("wss://"+storage_data.ws+":3334");
+console.log('connecting');
 socket.on('connect', () => {
+	console.log('conneced');
 	socket.emit('getState',uniqueId);
 });
 socket.on('disconnect', () => {
+	console.log('disconneced');
+});
+socket.on('error', () => {
+	console.log('error');
 });
 socket.on('shot', (data,id) => {
 	if(id == null || uniqueId == id) {
@@ -552,6 +553,7 @@ socket.on('audio_2', (data) => {
 socket.on('state', (state,reply,id) => {
 	console.log(reply);
 	console.log(id);
+	try{
 	if(reply){
 		if(uniqueId != id) {
 			console.log('reply not for me',uniqueId,id);
@@ -708,7 +710,7 @@ socket.on('state', (state,reply,id) => {
 		setSrt1muteColG('#f55');
 	}else{
 		srt1mute = false;
-		setSrt1muteColG('#000');
+		setSrt1muteColG('');
 	}
 
 	if(state.srt2mute){
@@ -716,14 +718,25 @@ socket.on('state', (state,reply,id) => {
 		setSrt2muteColG('#f55');
 	}else{
 		srt2mute = false;
-		setSrt2muteColG('#000');
+		setSrt2muteColG('');
 	}
 	console.log(JSON.stringify(state));
+	} catch (e){
+		console.log(e);
+	}
 });
+};
 
 console.log(uniqueId);
 
 var watchId = null;
+
+const setUrl = function(url) {
+    AsyncStorage.setItem('obsctrl_data',JSON.stringify({ws:url}));
+	storage_data = {ws:url};
+	console.log(url);
+	setLoggedInG(true);
+}
 
 const requestLocationPermission = async () => {
 
@@ -797,9 +810,15 @@ var storage_data = null;
 
 async function getStorageData(){
   try {
-    const value = await AsyncStorage.getItem('obsctrl_data')
-    if(value !== null) {
+    const value = await AsyncStorage.getItem('obsctrl_data');
+    if(value) {
       storage_data = JSON.parse(value);
+	  if(storage_data.ws){
+  	  	setLoggedInG(true);
+	    if(!socket || !socket.connected){
+		  connectSocket();
+	    }
+      }
     }
   } catch(e) {
   }
@@ -807,15 +826,50 @@ async function getStorageData(){
 
 getStorageData();
 
-const App = () => {
+const Settings = () => {
   const isDarkMode = useColorScheme() === 'dark';
-
-  const [gpsButtonColor,setGpsButtonColor2] = useState("gpsstate");
-  
   const backgroundStyle = {
   	userSelect: 'none'
 //    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+  var url = '';
+  if(storage_data && storage_data.ws){
+  	url = storage_data.ws;
+  }
+  const [text, setText] = useState(url);
+
+  return (
+    <SafeAreaView style={backgroundStyle}>
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <ScrollView contentInsetAdjustmentBehavior="automatic" style={{margin:1}}>
+        <View>
+          <TextInput
+            style={styles.input}
+			onChangeText={newText => setText(newText)}
+            defaultValue={text}
+          />
+	    </View>
+          <View style={{flexDirection: "row",flex:1}}>
+		    <View style={{ flex: 1,padding:10 }}>
+	          <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:'#55f'}} onPress={()=>{setUrl(text)}}>
+		        <Text style={styles.text}>OK</Text>
+		      </Pressable>
+		    </View>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+	);
+};
+
+const App = () => {
+  const isDarkMode = useColorScheme() === 'dark';
+  const backgroundStyle = {
+  	userSelect: 'none'
+//    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  };
+
+  const [gpsButtonColor,setGpsButtonColor2] = useState("gpsstate");
+  
 
   const [counter, setCounter] = useState(0);
 // Emmulate componentDidMount lifecycle
@@ -867,9 +921,9 @@ const App = () => {
   setSrt1ColG=function(c){setSrt1Col(c)};
   const [srt2col, setSrt2Col] = useState('#55f');
   setSrt2ColG=function(c){setSrt2Col(c)};
-  const [srt1mutecol, setSrt1muteCol] = useState('#000');
+  const [srt1mutecol, setSrt1muteCol] = useState('');
   setSrt1muteColG=function(c){setSrt1muteCol(c)};
-  const [srt2mutecol, setSrt2muteCol] = useState('#000');
+  const [srt2mutecol, setSrt2muteCol] = useState('');
   setSrt2muteColG=function(c){setSrt2muteCol(c)};
   const [tweetcol, setTweetCol] = useState('#55f');
   setTweetColG=function(c){setTweetCol(c)};
@@ -888,6 +942,7 @@ const App = () => {
   setImg2UriG=function(c){setImg2Uri(c)};
   //if(socket.connected) socket.emit('getState');
 
+
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
@@ -905,12 +960,12 @@ const App = () => {
 		  </View>
           <View style={{ flex: 1 ,padding:1}}>
 	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:srt1col}} onPress={socketSrt1mute}>
-		      <Text style={{...styles.text,color:srt1mutecol}}>{srt1Text}</Text>
+		      <Text style={srt1mutecol?{...styles.text,color:srt1mutecol}:styles.text}>{srt1Text}</Text>
 		    </Pressable>
 		  </View>
       	  <View style={{ flex: 1, padding:1 }}>
 	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:srt2col}} onPress={socketSrt2mute}>
-		      <Text style={{...styles.text,color:srt2mutecol}}>{srt2Text}</Text>
+		      <Text style={srt2mutecol?{...styles.text,color:srt2mutecol}:styles.text}>{srt2Text}</Text>
 		    </Pressable>
 		  </View>
         </View>
@@ -1029,6 +1084,13 @@ const App = () => {
 				/>
 		    </Pressable>
         </View>
+		<View style={{backgroundColor: isDarkMode ? '#000' : '#fff',flexDirection: "row",flex:1}}>
+      	  <View style={{ flex: 1, padding:1 }}>
+	         <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:'#55f'}} onPress={function(){setLoggedInG(false)}}>
+		      <Text style={styles.text}>Set Server</Text>
+		    </Pressable>
+		  </View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -1038,6 +1100,41 @@ const styles = StyleSheet.create({
   highlight: {
     fontWeight: '700',
   },
+  text: {
+    fontSize: 24
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
 });
 
-export default App;
+function Main() {
+  
+  var loggedIn = false;
+  if(storage_data && storage_data.ws){
+    loggedIn = true;
+	if(!socket || !socket.connected){
+		connectSocket();
+	}
+  }
+
+  const [isLoggedIn, setLoggedIn] = useState(loggedIn);
+  setLoggedInG=function(c){
+    if(c){
+		connectSocket();
+	}else{
+	
+	}
+  	setLoggedIn(c)
+  };
+  
+  if (isLoggedIn) {
+    return <App />;
+  }
+  return <Settings />;
+}
+
+export default Main;
