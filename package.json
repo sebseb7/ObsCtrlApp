@@ -22,7 +22,8 @@
     "react-native-get-random-values": "^1.8.0",
     "react-native-web": "^0.18.9",
     "socket.io-client": "^4.5.2",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "valid-url": "^1.0.9"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

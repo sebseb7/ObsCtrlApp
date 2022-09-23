@@ -26,6 +26,7 @@ import {
 import Geolocation from '@react-native-community/geolocation';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
+import { isWebUri } from 'valid-url';
 
 var uniqueId = uuidv4();
 
@@ -97,13 +98,13 @@ var map2On = false;
 
 const socketSrt1mute = () => {
 	if(srt1mute){
-		if(socket.connected){
+		if(socket && socket.connected){
 			socket.emit('srt1muteOff',uniqueId);
 			srt1mute=false;
 			setSrt1muteColG('');
 		}
 	}else{
-		if(socket.connected){
+		if(socket && socket.connected){
 			socket.emit('srt1mute',uniqueId);
 			srt1mute=true;
 			setSrt1muteColG('#f55');
@@ -112,13 +113,13 @@ const socketSrt1mute = () => {
 }
 const socketSrt2mute = () => {
 	if(srt2mute){
-		if(socket.connected){
+		if(socket && socket.connected){
 			socket.emit('srt2muteOff',uniqueId);
 			srt2mute=false;
 			setSrt2muteColG('');
 		}
 	}else{
-		if(socket.connected){
+		if(socket && socket.connected){
 			socket.emit('srt2mute',uniqueId);
 			srt2mute=true;
 			setSrt2muteColG('#f55');
@@ -127,13 +128,13 @@ const socketSrt2mute = () => {
 }
 const socketMap = () => {
 	if(mapOn){
-		if(socket.connected){
+		if(socket && socket.connected){
 			socket.emit('mapoff',uniqueId);
 			mapOn=false;
 			setMapColG('#55f');
 		}
 	}else{
-		if(socket.connected){
+		if(socket && socket.connected){
 			socket.emit('mapon',uniqueId);
 			mapOn=true;
 			map2On=false;
@@ -144,13 +145,13 @@ const socketMap = () => {
 }
 const socketMap2 = () => {
 	if(map2On){
-		if(socket.connected){
+		if(socket && socket.connected){
 			socket.emit('mapoff2',uniqueId);
 			map2On=false;
 			setMap2ColG('#55f');
 		}
 	}else{
-		if(socket.connected){
+		if(socket && socket.connected){
 			socket.emit('mapon2',uniqueId);
 			map2On=true;
 			mapOn=false;
@@ -172,7 +173,7 @@ const socketMapClear = () => {
 			}
 		},2000);
 	}
-	else if(socket.connected){
+    else if(socket && socket.connected){
 		clearPress=false;
 		setClearColG('#55f');
 		socket.emit('clear3',uniqueId);
@@ -189,7 +190,7 @@ const socketMap2Clear = () => {
 			}
 		},2000);
 	}
-	else if(socket.connected){
+    else if(socket && socket.connected){
 		clear2Press=false;
 		setClear2ColG('#55f');
 		socket.emit('clear2',uniqueId);
@@ -207,7 +208,7 @@ const socketTweet = () => {
 			}
 		},2000);
 	}
-	else if(socket.connected){
+    else if(socket && socket.connected){
 		socket.emit('tweet');
 		tweetPress=false;
 		setTweetColG('#55f');
@@ -230,7 +231,7 @@ const socketRec = () => {
 				}
 			},2000);
 		}
-		else if(socket.connected){
+    	else if(socket && socket.connected){
 			socket.emit('recstop',uniqueId);
 			recPress=false;
 			recOn=false;
@@ -247,7 +248,7 @@ const socketRec = () => {
 				}
 			},2000);
 		}
-		else if(socket.connected){
+    	else if(socket && socket.connected){
 			socket.emit('recstart',uniqueId);
 			recPress=false;
 			recOn=true;
@@ -268,7 +269,7 @@ const socketRtmp1 = () => {
 				}
 			},2000);
 		}
-		else if(socket.connected){
+    	else if(socket && socket.connected){
 			socket.emit('rtmp1stop',uniqueId);
 			rtmp1Press=false;
 			rtmp1On=false;
@@ -285,7 +286,7 @@ const socketRtmp1 = () => {
 				}
 			},2000);
 		}
-		else if(socket.connected){
+    	else if(socket && socket.connected){
 			socket.emit('rtmp1start',uniqueId);
 			rtmp1Press=false;
 			rtmp1On=true;
@@ -306,7 +307,7 @@ const socketRtmp2 = () => {
 				}
 			},2000);
 		}
-		else if(socket.connected){
+    	else if(socket && socket.connected){
 			socket.emit('rtmp2stop',uniqueId);
 			rtmp2Press=false;
 			rtmp2On=false;
@@ -323,7 +324,7 @@ const socketRtmp2 = () => {
 				}
 			},2000);
 		}
-		else if(socket.connected){
+    	else if(socket && socket.connected){
 			socket.emit('rtmp2start',uniqueId);
 			rtmp2Press=false;
 			rtmp2On=true;
@@ -344,7 +345,7 @@ const socketRtmp3 = () => {
 				}
 			},2000);
 		}
-		else if(socket.connected){
+    	else if(socket && socket.connected){
 			socket.emit('rtmp3stop',uniqueId);
 			rtmp3Press=false;
 			rtmp3On=false;
@@ -361,7 +362,7 @@ const socketRtmp3 = () => {
 				}
 			},2000);
 		}
-		else if(socket.connected){
+    	else if(socket && socket.connected){
 			socket.emit('rtmp3start',uniqueId);
 			rtmp3Press=false;
 			rtmp3On=true;
@@ -372,7 +373,7 @@ const socketRtmp3 = () => {
 var sceneMode=1;
 const socketScene1 = () => {
 	if(sceneMode!=1){
-		if(socket.connected){
+    	if(socket && socket.connected){
 			socket.emit('scene1',uniqueId);
 			sceneMode=1;
 			setScene1ColG('#070');
@@ -386,7 +387,7 @@ const socketScene1 = () => {
 }
 const socketScene2 = () => {
 	if(sceneMode!=2){
-		if(socket.connected){
+    	if(socket && socket.connected){
 			socket.emit('scene2',uniqueId);
 			sceneMode=2;
 			setScene1ColG('#55f');
@@ -400,7 +401,7 @@ const socketScene2 = () => {
 }
 const socketSceneMix = () => {
 	if(sceneMode!=3){
-		if(socket.connected){
+    	if(socket && socket.connected){
 			socket.emit('sceneMix',uniqueId);
 			sceneMode=3;
 			setScene1ColG('#55f');
@@ -414,7 +415,7 @@ const socketSceneMix = () => {
 }
 const socketSceneMix1 = () => {
 	if(sceneMode!=31){
-		if(socket.connected){
+    	if(socket && socket.connected){
 			socket.emit('sceneMix1',uniqueId);
 			sceneMode=31;
 			setScene1ColG('#55f');
@@ -428,7 +429,7 @@ const socketSceneMix1 = () => {
 }
 const socketSceneMix2 = () => {
 	if(sceneMode!=32){
-		if(socket.connected){
+    	if(socket && socket.connected){
 			socket.emit('sceneMix2',uniqueId);
 			sceneMode=32;
 			setScene1ColG('#55f');
@@ -442,7 +443,7 @@ const socketSceneMix2 = () => {
 }
 const socketSceneMixNone = () => {
 	if(sceneMode!=4){
-		if(socket.connected){
+    	if(socket && socket.connected){
 			socket.emit('sceneMixNone',uniqueId);
 			sceneMode=4;
 			setScene1ColG('#55f');
@@ -457,7 +458,7 @@ const socketSceneMixNone = () => {
 var introOn = false;
 const socketIntro = () => {
 	if(!introOn){
-		if(socket.connected){
+    	if(socket && socket.connected){
 			socket.emit('modeIntro',uniqueId);
 			introOn=true;
 			extroOn=false;
@@ -465,7 +466,7 @@ const socketIntro = () => {
 			setExtroColG('#55f');
 		}
 	}else{
-		if(socket.connected){
+    	if(socket && socket.connected){
 			socket.emit('modeNormal',uniqueId);
 			introOn=false;
 			extroOn=false;
@@ -477,7 +478,7 @@ const socketIntro = () => {
 var extroOn = false;
 const socketExtro = () => {
 	if(!extroOn){
-		if(socket.connected){
+    	if(socket && socket.connected){
 			socket.emit('modeExtro',uniqueId);
 			introOn=false;
 			extroOn=true;
@@ -485,7 +486,7 @@ const socketExtro = () => {
 			setExtroColG('#070');
 		}
 	}else{
-		if(socket.connected){
+    	if(socket && socket.connected){
 			socket.emit('modeNormal',uniqueId);
 			introOn=false;
 			extroOn=false;
@@ -495,24 +496,35 @@ const socketExtro = () => {
 	}
 }
 const socketShot = () => {
-	socket.emit('getShot',uniqueId);
-	socket.emit('getState',uniqueId);
+    if(socket && socket.connected){
+		socket.emit('getShot',uniqueId);
+		socket.emit('getState',uniqueId);
+	}
 	setImgUriG('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYwAAADYCAIAAAB3M0NIAAABhGlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV9TxSItInYQcchQnayIijhKFYtgobQVWnUwufQLmjQkKS6OgmvBwY/FqoOLs64OroIg+AHi6OSk6CIl/i8ptIjx4Lgf7+497t4BQqPCVLNrAlA1y0jFY2I2tyr2vEJAAP0YR0hipp5IL2bgOb7u4ePrXZRneZ/7c4SUvMkAn0g8x3TDIt4gntm0dM77xGFWkhTic+Ixgy5I/Mh12eU3zkWHBZ4ZNjKpeeIwsVjsYLmDWclQiaeJI4qqUb6QdVnhvMVZrdRY6578hcG8tpLmOs1hxLGEBJIQIaOGMiqwEKVVI8VEivZjHv4hx58kl0yuMhg5FlCFCsnxg//B727NwtSkmxSMAd0vtv0xAvTsAs26bX8f23bzBPA/A1da219tALOfpNfbWuQI6NsGLq7bmrwHXO4Ag0+6ZEiO5KcpFArA+xl9Uw4YuAV619zeWvs4fQAy1NXyDXBwCIwWKXvd492Bzt7+PdPq7wdmHHKiSMerMAAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAAd0SU1FB+YCCBEvCyuXARIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAABEElEQVR42u3BMQEAAADCoPVPbQsvoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgLcB62UAATGAzeEAAAAASUVORK5CYII=');
 }
 const socketAudioLevel = () => {
-	socket.emit('getAudioLevel',uniqueId);
+    if(socket && socket.connected){
+		socket.emit('getAudioLevel',uniqueId);
+	}
 	setImg2UriG('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYwAAADYCAIAAAB3M0NIAAABhGlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV9TxSItInYQcchQnayIijhKFYtgobQVWnUwufQLmjQkKS6OgmvBwY/FqoOLs64OroIg+AHi6OSk6CIl/i8ptIjx4Lgf7+497t4BQqPCVLNrAlA1y0jFY2I2tyr2vEJAAP0YR0hipp5IL2bgOb7u4ePrXZRneZ/7c4SUvMkAn0g8x3TDIt4gntm0dM77xGFWkhTic+Ixgy5I/Mh12eU3zkWHBZ4ZNjKpeeIwsVjsYLmDWclQiaeJI4qqUb6QdVnhvMVZrdRY6578hcG8tpLmOs1hxLGEBJIQIaOGMiqwEKVVI8VEivZjHv4hx58kl0yuMhg5FlCFCsnxg//B727NwtSkmxSMAd0vtv0xAvTsAs26bX8f23bzBPA/A1da219tALOfpNfbWuQI6NsGLq7bmrwHXO4Ag0+6ZEiO5KcpFArA+xl9Uw4YuAV619zeWvs4fQAy1NXyDXBwCIwWKXvd492Bzt7+PdPq7wdmHHKiSMerMAAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAAd0SU1FB+YCCBEvCyuXARIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAABEElEQVR42u3BMQEAAADCoPVPbQsvoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgLcB62UAATGAzeEAAAAASUVORK5CYII=');
 }
 var currentBy;
 var currentText;
 const confirmText = () => {
-	if(currentBy && currentText && socket.connected){
+	if(currentBy && currentText && socket && socket.connected){
 		if(currentBy) socket.emit('respond','confirmed: '+currentText,currentBy);
 	}
 }
 
 
 function connectSocket() {
+
+if (!isWebUri("https://"+storage_data.ws+":3334")) {
+	console.log("Not a valid url.");
+    return;
+}
+
+try{
 socket = io("wss://"+storage_data.ws+":3334", { transports: ["websocket"] });
 console.log('connecting');
 socket.on('connect', () => {
@@ -539,7 +551,7 @@ socket.on('infoText', (data,by) => {
 	setInfoTextG(data);
 	currentBy = by;
 	currentText = data;
-	if(socket.connected){
+	if(socket && socket.connected){
 		if(by)socket.emit('respond','delivered: '+data,by);
 	}
 });
@@ -568,7 +580,7 @@ socket.on('state', (state,reply,id) => {
 		}
 	}
 	if(!setScene1ColG){
-		setTimeout(()=>{socket.emit('getState',uniqueId);},2000);
+		setTimeout(()=>{if(socket && socket.connected) {socket.emit('getState',uniqueId);};},2000);
 	}
 	if(state.sceneMode == 1){
 		sceneMode=1;
@@ -727,6 +739,9 @@ socket.on('state', (state,reply,id) => {
 		console.log(e);
 	}
 });
+}catch(e){
+	console.log(e);
+}
 };
 
 console.log(uniqueId);
@@ -780,7 +795,7 @@ const requestLocationPermission = async () => {
 	  	  setT('got loc');
           const initialPosition = JSON.stringify(position);
           console.log('GPS:'+JSON.stringify(initialPosition));
-		  if(socket.connected){
+		  if(socket && socket.connected){
 		  	socket.emit('tpv2',{lat:position.coords.latitude,lon:position.coords.longitude,speed:position.coords.speed});
 			socket_counter++;
 	  		setT(socket_counter);
@@ -839,6 +854,7 @@ const Settings = () => {
   	url = storage_data.ws;
   }
   const [text, setText] = useState(url);
+  const [statusText, setStatusText] = useState('');
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -853,9 +869,14 @@ const Settings = () => {
 	    </View>
           <View style={{flexDirection: "row",flex:1}}>
 		    <View style={{ flex: 1,padding:10 }}>
-	          <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:'#55f'}} onPress={()=>{setUrl(text)}}>
+	          <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:'#55f'}} onPress={()=>{if (!isWebUri("https://"+text+":3334")) {setStatusText("Not a valid host: \""+text+"\"") }else{setStatusText("");setUrl(text)}}}>
 		        <Text style={styles.text}>OK</Text>
 		      </Pressable>
+		    </View>
+          </View>
+          <View style={{flexDirection: "row",flex:1}}>
+		    <View style={{ flex: 1,padding:10 }}>
+		        <Text style={styles.text}>{statusText}</Text>
 		    </View>
           </View>
         </ScrollView>
