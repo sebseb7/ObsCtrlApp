@@ -27,8 +27,15 @@ import Geolocation from '@react-native-community/geolocation';
 
 import DeviceInfo from 'react-native-device-info';
 
-const uniqueId = DeviceInfo.getUniqueId();
+var uniqueId = Math.random();
 
+DeviceInfo.getUniqueId().then((uId) => {
+	uniqueId=uId;
+},(error) => {
+    console.error(error); // Stacktrace
+});
+
+console.log('UID',uniqueId);
 const io = require("socket.io-client");
 var socket;
 
@@ -547,7 +554,7 @@ socket.on('state', (state,reply,id) => {
 	console.log(id);
 	if(reply){
 		if(uniqueId != id) {
-			console.log('reply not for me');
+			console.log('reply not for me',uniqueId,id);
 			return;
 		}
 	}else{
