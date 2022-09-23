@@ -15,6 +15,7 @@ import {
   StatusBar,
   StyleSheet,
   PermissionsAndroid,
+  Button,
   Text,
   TextInput,
   useColorScheme,
@@ -860,23 +861,27 @@ const Settings = () => {
     <SafeAreaView style={backgroundStyle}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <ScrollView contentInsetAdjustmentBehavior="automatic" style={{margin:1}}>
+          <View style={{flexDirection: "row",flex:1}}>
+		    <View style={{ flex: 1,padding:12 }}>
+		        <Text style={styles.text}>WebSocket Hostname:</Text>
+		    </View>
+          </View>
         <View>
           <TextInput
-            style={styles.input}
+            style={{...styles.input,backgroundColor:'#fff',color:'#000'}}
 			onChangeText={newText => setText(newText)}
             defaultValue={text}
           />
 	    </View>
           <View style={{flexDirection: "row",flex:1}}>
-		    <View style={{ flex: 1,padding:10 }}>
-	          <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:'#55f'}} onPress={()=>{if (!isWebUri("https://"+text+":3334")) {setStatusText("Not a valid host: \""+text+"\"") }else{setStatusText("");setUrl(text)}}}>
-		        <Text style={styles.text}>OK</Text>
-		      </Pressable>
+		    <View style={{ flex: 1,padding:12 }}>
+	          <Button title="OK" onPress={()=>{if (!isWebUri("https://"+text+":3334")) {setStatusText("Not a valid host: \""+text+"\"") }else{setStatusText("");setUrl(text)}}}>
+		      </Button>
 		    </View>
           </View>
           <View style={{flexDirection: "row",flex:1}}>
-		    <View style={{ flex: 1,padding:10 }}>
-		        <Text style={styles.text}>{statusText}</Text>
+		    <View style={{ flex: 1,padding:12 }}>
+		        <Text style={{...styles.text,color:'#f00'}}>{statusText}</Text>
 		    </View>
           </View>
         </ScrollView>
@@ -893,16 +898,6 @@ const App = () => {
 
   const [gpsButtonColor,setGpsButtonColor2] = useState("gpsstate");
   
-
-  const [counter, setCounter] = useState(0);
-// Emmulate componentDidMount lifecycle
-  useEffect(() => {
-    s = setInterval(() => {
-      setCounter(
-       gpsButtonC
-	  );
-    }, 1000);
-  }, []);
 
   
   const [gpsText, setText] = useState('init');
@@ -977,9 +972,8 @@ const App = () => {
 		</View>
 		<View style={{backgroundColor: isDarkMode ? '#000' : '#fff',flexDirection: "row",flex:1}}>
 		  <View style={{ flex: 1,padding:1 }}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:counter}} onPress={requestLocationPermission}>
-		      <Text style={styles.text}>{gpsText}</Text>
-		    </Pressable>
+	        <Button title={gpsText} color="#55f" onPress={requestLocationPermission}>
+		    </Button>
 		  </View>
           <View style={{ flex: 1 ,padding:1}}>
 	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:srt1col}} onPress={socketSrt1mute}>
