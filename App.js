@@ -62,6 +62,8 @@ var socket_counter = 0;
 var gps_active = false;
 
 
+var setUrlG;
+var setStatusTextG;
 var setLoggedInG;
 var setMapColG;
 var setMap2ColG;
@@ -518,7 +520,25 @@ const confirmText = () => {
 }
 
 
+var socket_initialized = false;
 function connectSocket() {
+	if(socket_initialized) {
+		if(socket.io.uri != "wss://"+storage_data.ws+":3334"){
+			console.log('reconn '+storage_data.ws);
+			socket.disconnect();
+			socket_initialized = false;
+			socket=null;
+			connectSocket();
+		}else{
+			if(socket && socket.connected)
+				if(gLoggedin){
+					gLoggedin=false;
+					setLoggedInG(true);
+				}
+		}
+		return;
+	}
+	socket_initialized = true;
 
 if (!isWebUri("https://"+storage_data.ws+":3334")) {
 	console.log("Not a valid url.");
@@ -528,15 +548,30 @@ if (!isWebUri("https://"+storage_data.ws+":3334")) {
 try{
 socket = io("wss://"+storage_data.ws+":3334", { transports: ["websocket"] });
 console.log('connecting');
+socket.on('connect_error', (error) => {
+	//setLoggedInG(false);
+	if(setStatusTextG){
+		setStatusTextG(error.toString());
+	}
+	console.log('c error '+error);
+});
 socket.on('connect', () => {
 	console.log('conneced');
+	if(gLoggedin){
+		gLoggedin=false;
+		setLoggedInG(true);
+	}
 	socket.emit('getState',uniqueId);
 });
 socket.on('disconnect', () => {
+	//setLoggedInG(false);
 	console.log('disconneced');
 });
-socket.on('error', () => {
-	console.log('error');
+socket.on('error', (error) => {
+	console.log('error '+error);
+});
+socket.on('reconnect', (a) => {
+	console.log('reconnect '+a);
 });
 socket.on('shot', (data,id) => {
 	if(id == null || uniqueId == id) {
@@ -748,12 +783,14 @@ socket.on('state', (state,reply,id) => {
 console.log(uniqueId);
 
 var watchId = null;
+var gLoggedin = false;
 
 const setUrl = function(url) {
     AsyncStorage.setItem('obsctrl_data',JSON.stringify({ws:url}));
 	storage_data = {ws:url};
 	console.log(url);
-	setLoggedInG(true);
+	gLoggedin=true;
+	connectSocket();
 }
 
 const requestLocationPermission = async () => {
@@ -832,9 +869,12 @@ async function getStorageData(){
     if(value) {
       storage_data = JSON.parse(value);
 	  if(storage_data.ws){
-  	  	setLoggedInG(true);
+		if(setUrlG){
+			setUrlG(storage_data.ws);
+		};
 	    if(!socket || !socket.connected){
 		  connectSocket();
+		  gLoggedin=true;
 	    }
       }
     }
@@ -855,7 +895,9 @@ const Settings = () => {
   	url = storage_data.ws;
   }
   const [text, setText] = useState(url);
+  setUrlG=setText;
   const [statusText, setStatusText] = useState('');
+  setStatusTextG=setStatusText;
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -863,7 +905,7 @@ const Settings = () => {
       <ScrollView contentInsetAdjustmentBehavior="automatic" style={{margin:1}}>
           <View style={{flexDirection: "row",flex:1}}>
 		    <View style={{ flex: 1,padding:12 }}>
-		        <Text style={styles.text}>WebSocket Hostname:</Text>
+		        <Text style={styles.text}>ObsCtrl Backend Hostname:</Text>
 		    </View>
           </View>
         <View>
@@ -971,7 +1013,7 @@ const App = () => {
 		  </Pressable>
 		</View>
 		<View style={{backgroundColor: isDarkMode ? '#000' : '#fff',flexDirection: "row",flex:1}}>
-		  <View style={{ flex: 1,padding:1 }}>
+		  <View style={{ flex: 1,padding:3 }}>
 	        <Button title={gpsText} color="#55f" onPress={requestLocationPermission}>
 		    </Button>
 		  </View>
@@ -1103,7 +1145,7 @@ const App = () => {
         </View>
 		<View style={{backgroundColor: isDarkMode ? '#000' : '#fff',flexDirection: "row",flex:1}}>
       	  <View style={{ flex: 1, padding:1 }}>
-	         <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:'#55f'}} onPress={function(){setLoggedInG(false)}}>
+	         <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:'#55f'}} onPress={function(){gLoggedin=false;setLoggedInG(false)}}>
 		      <Text style={styles.text}>Set Server</Text>
 		    </Pressable>
 		  </View>
@@ -1135,6 +1177,7 @@ function Main() {
     loggedIn = true;
 	if(!socket || !socket.connected){
 		connectSocket();
+		gLoggedin=true;
 	}
   }
 

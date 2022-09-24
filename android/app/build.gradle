@@ -2,6 +2,37 @@ apply plugin: "com.android.application"
 
 import com.android.build.OutputFile
 import org.apache.tools.ant.taskdefs.condition.Os
+// Import JSON parser, place it at the top of the file
+import groovy.json.JsonSlurper
+
+// Read package.json and return `version` field
+def getVersionFromNpm() {
+    //  Read and parse package.json file from project root
+    def inputFile = new File("$rootDir/../package.json")
+    def packageJson = new JsonSlurper().parseText(inputFile.text)
+
+
+    println ("Version Name: " +  packageJson["version"]);
+    // Return the version, you can get any value this way
+    return packageJson["version"]
+}
+
+// Convert version name to a version number
+def getNumericVersionFromNpm() {
+
+    def versionName =  getVersionFromNpm()
+    def parts = versionName.split("\\.")
+
+
+    int hotfix = parts[2] as int
+    int minor = parts[1] as int
+    int major = parts[0] as int
+
+    def numericVersion =  major*100000 + minor*1000 + hotfix
+    println('Version Code: ' + numericVersion)
+
+    return numericVersion
+}
 
 /**
  * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets
@@ -138,9 +169,12 @@ android {
         applicationId "com.obsctrl"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "2.0"
-        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
+        //versionCode 2
+        //versionName "2.0"
+        versionCode getNumericVersionFromNpm()
+        versionName getVersionFromNpm()
+
+		buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
         if (isNewArchitectureEnabled()) {
             // We configure the CMake build only if you decide to opt-in for the New Architecture.
