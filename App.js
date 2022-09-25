@@ -13,7 +13,7 @@ import {
 	View,
 	Image,
 	Pressable,
-	TouchableHighlight
+	TouchableOpacity
 } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import 'react-native-get-random-values';
@@ -928,96 +928,96 @@ class App extends Component {
 						</View>
 					</View>
 					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
-						<View style={{ flex: 1,padding:1 }}>
-							<TouchableHighlight style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.mapcol}} onPress={socketMap}>
+						<View style={{ flex: 1,padding:3 }}>
+							<TouchableOpacity style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.mapcol}} onPress={socketMap}>
 								<Text style={styles.text}>Map</Text>
-							</TouchableHighlight>
+							</TouchableOpacity>
 						</View>
-						<View style={{ flex: 1 ,padding:1}}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.clearcol}} onPress={socketMapClear}>
+						<View style={{ flex: 1 ,padding:3}}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.clearcol}} onPress={socketMapClear}>
 								<Text style={styles.text}>Clear</Text>
 							</Pressable>
 						</View>
-						<View style={{ flex: 1,padding:1 }}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.map2col}} onPress={socketMap2}>
+						<View style={{ flex: 1,padding:3 }}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.map2col}} onPress={socketMap2}>
 								<Text style={styles.text}>Map2</Text>
 							</Pressable>
 						</View>
-						<View style={{ flex: 1 ,padding:1}}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.clear2col}} onPress={socketMap2Clear}>
+						<View style={{ flex: 1 ,padding:3}}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.clear2col}} onPress={socketMap2Clear}>
 								<Text style={styles.text}>Clear2</Text>
 							</Pressable>
 						</View>
 					</View>
 					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
-						<View style={{ flex: 1,padding:1 }}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.introcol}} onPress={socketIntro}>
+						<View style={{ flex: 1,padding:3 }}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.introcol}} onPress={socketIntro}>
 								<Text style={styles.text}>Intro</Text>
 							</Pressable>
 						</View>
-						<View style={{ flex: 1, padding:1 }}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.extrocol}} onPress={socketExtro}>
+						<View style={{ flex: 1, padding:3 }}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.extrocol}} onPress={socketExtro}>
 								<Text style={styles.text}>Extro</Text>
 							</Pressable>
 						</View>
-						<View style={{ flex: 1, padding:1 }}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.tweetcol}} onPress={socketTweet}>
+						<View style={{ flex: 1, padding:3 }}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.tweetcol}} onPress={socketTweet}>
 								<Text style={styles.text}>Tweet</Text>
 							</Pressable>
 						</View>
 					</View>
 					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
-						<View style={{ flex: 1,padding:1 }}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.rtmp1col}} onPress={socketRtmp1}>
+						<View style={{ flex: 1,padding:3 }}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.rtmp1col}} onPress={socketRtmp1}>
 								<Text style={styles.text}>RTMP1</Text>
 							</Pressable>
 						</View>
-						<View style={{ flex: 1, padding:1 }}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.rtmp2col}} onPress={socketRtmp2}>
+						<View style={{ flex: 1, padding:3 }}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.rtmp2col}} onPress={socketRtmp2}>
 								<Text style={styles.text}>{this.state.rtmp2text}</Text>
 							</Pressable>
 						</View>
-						<View style={{ flex: 1 ,padding:1}}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.rtmp3col}} onPress={socketRtmp3}>
+						<View style={{ flex: 1 ,padding:3}}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.rtmp3col}} onPress={socketRtmp3}>
 								<Text style={styles.text}>RTMP3</Text>
 							</Pressable>
 						</View>
-						<View style={{ flex: 1 ,padding:1}}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.reccol}} onPress={socketRec}>
+						<View style={{ flex: 1 ,padding:3}}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.reccol}} onPress={socketRec}>
 								<Text style={styles.text}>Rec</Text>
 							</Pressable>
 						</View>
 					</View>
 					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
-						<View style={{ flex: 1,padding:1 }}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.scene1col}} onPress={socketScene1}>
+						<View style={{ flex: 1,padding:3}}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.scene1col}} onPress={socketScene1}>
 								<Text style={styles.text}>1</Text>
 							</Pressable>
 						</View>
-						<View style={{ flex: 1, padding:1 }}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.scene2col}} onPress={socketScene2}>
+						<View style={{ flex: 1, padding:3 }}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.scene2col}} onPress={socketScene2}>
 								<Text style={styles.text}>2</Text>
 							</Pressable>
 						</View>
-						<View style={{ flex: 1 ,padding:1}}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.sceneMixcol}} onPress={socketSceneMix}>
+						<View style={{ flex: 1 ,padding:3}}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMixcol}} onPress={socketSceneMix}>
 								<Text style={styles.text}>Mix</Text>
 							</Pressable>
 						</View>
 					</View>
 					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
-						<View style={{ flex: 1, padding:1 }}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.sceneMix1col}} onPress={socketSceneMix1}>
+						<View style={{ flex: 1, padding:3 }}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMix1col}} onPress={socketSceneMix1}>
 								<Text style={styles.text}>Mix1</Text>
 							</Pressable>
 						</View>
-						<View style={{ flex: 1, padding:1 }}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.sceneMix2col}} onPress={socketSceneMix2}>
+						<View style={{ flex: 1, padding:3 }}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMix2col}} onPress={socketSceneMix2}>
 								<Text style={styles.text}>Mix2</Text>
 							</Pressable>
 						</View>
-						<View style={{ flex: 1 ,padding:1}}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.sceneMixNonecol}} onPress={socketSceneMixNone}>
+						<View style={{ flex: 1 ,padding:3}}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMixNonecol}} onPress={socketSceneMixNone}>
 								<Text style={styles.text}>None</Text>
 							</Pressable>
 						</View>
@@ -1153,7 +1153,10 @@ const styles = StyleSheet.create({
 		fontWeight: '700',
 	},
 	text: {
-		fontSize: 24
+		fontSize: 24,
+		fontWeight: 500,
+		fontSize: 14,
+		fontFamily: "'Segoe UI',Roboto,Helvetica,Arial,sans-serif"
 	},
 	input: {
 		height: 40,
