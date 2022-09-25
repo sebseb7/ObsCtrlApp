@@ -20,6 +20,7 @@ import {
 import Geolocation from '@react-native-community/geolocation';
 import {ThemeProvider} from 'styled-components';
 import styled from 'styled-components/native';
+import Slider from '@react-native-community/slider';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import { isWebUri } from 'valid-url';
@@ -38,6 +39,7 @@ var gps_active = false;
 var setAppStateG2=function(){};
 var setStatusTextG;
 var setUrlStateG;
+var setSizeStateG;
 var setLoggedInG;
 
 var srt1on = false;
@@ -505,251 +507,251 @@ function connectSocket() {
 	}
 	socket_initialized = true;
 
-if (!isWebUri("https://"+storage_data.ws+":3334")) {
-	console.log("Not a valid url.");
-	return;
-}
+	if (!isWebUri("https://"+storage_data.ws+":3334")) {
+		console.log("Not a valid url.");
+		return;
+	}
 
-try{
-socket = io("wss://"+storage_data.ws+":3334", { transports: ["websocket"] });
-console.log('connecting');
-socket.on('connect_error', (error) => {
-	if(setStatusTextG){
-		setStatusTextG(error.toString());
-	}
-	console.log('c error '+error);
-});
-socket.on('connect', () => {
-	console.log('conneced');
-	if(gLoggedin){
-		gLoggedin=false;
-		setLoggedInG(true);
-	}
-	socket.emit('getState',uniqueId);
-	console.log('getState');
-});
-socket.on('disconnect', () => {
-	console.log('disconneced');
-});
-socket.on('error', (error) => {
-	console.log('error '+error);
-});
-socket.on('reconnect', (a) => {
-	console.log('reconnect '+a);
-});
-socket.on("connect_error", (error) => {
-	console.log('conn error '+error);
-});
-socket.on('shot', (data,id) => {
-	if(id == null || uniqueId == id) {
-		setAppStateG({'imgUri':data});
-	}
-});
-socket.on('audioLevel', (data,id) => {
-	if(id == null || uniqueId == id) {
-		setAppStateG({'img2Uri':data});
-	}
-});
-socket.on('infoText', (data,by) => {
-	setAppStateG({'infoText':data});
-	currentBy = by;
-	currentText = data;
-	if(socket && socket.connected){
-		if(by)socket.emit('respond','delivered: '+data,by);
-	}
-});
-socket.on('ytCount', (data) => {
-	setAppStateG({'rtmp2text':data});
-});
-socket.on('audio_1', (data) => {
-	setAppStateG({'srt1text':data});
-});
-socket.on('audio_2', (data) => {
-	setAppStateG({'srt2text':data});
-});
-socket.on('state', (state,reply,id) => {
-	console.log(reply);
-	console.log(id);
 	try{
-	if(reply){
-		if(uniqueId != id) {
-			console.log('reply not for me',uniqueId,id);
-		//	return;
-		}
-	}else{
-		if(uniqueId == id) {
-			console.log('state from self');
-		//	return;
-		}
-	}
-	//if(!setScene1ColG){
-	//	setTimeout(()=>{if(socket && socket.connected) {socket.emit('getState',uniqueId);};},2000);
-	//}
-	
-	var newAppState = {};
-	if(state.sceneMode == 1){
-		sceneMode=1;
-		newAppState.scene1col='#070';
-		newAppState.scene2col='#55f';
-		newAppState.sceneMixcol='#55f';
-		newAppState.sceneMix1col='#55f';
-		newAppState.sceneMix2col='#55f';
-		newAppState.sceneMixNonecol='#55f';
-	}
-	else if(state.sceneMode == 2){
-		sceneMode=2;
-		newAppState.scene1col='#55f';
-		newAppState.scene2col='#070';
-		newAppState.sceneMixcol='#55f';
-		newAppState.sceneMix1col='#55f';
-		newAppState.sceneMix2col='#55f';
-		newAppState.sceneMixNonecol='#55f';
-	}
-	else if(state.sceneMode == 3){
-		sceneMode=3;
-		newAppState.scene1col='#55f';
-		newAppState.scene2col='#55f';
-		newAppState.sceneMixcol='#070';
-		newAppState.sceneMix1col='#55f';
-		newAppState.sceneMix2col='#55f';
-		newAppState.sceneMixNonecol='#55f';
-	}
-	else if(state.sceneMode == 31){
-		sceneMode=3;
-		newAppState.scene1col='#55f';
-		newAppState.scene2col='#55f';
-		newAppState.sceneMixcol='#55f';
-		newAppState.sceneMix1col='#070';
-		newAppState.sceneMix2col='#55f';
-		newAppState.sceneMixNonecol='#55f';
-	}
-	else if(state.sceneMode == 32){
-		sceneMode=3;
-		newAppState.scene1col='#55f';
-		newAppState.scene2col='#55f';
-		newAppState.sceneMixcol='#55f';
-		newAppState.sceneMix1col='#55f';
-		newAppState.sceneMix2col='#070';
-		newAppState.sceneMixNonecol='#55f';
-	}
-	else if(state.sceneMode == 4){
-		sceneMode=4;
-		newAppState.scene1col='#55f';
-		newAppState.scene2col='#55f';
-		newAppState.sceneMixcol='#55f';
-		newAppState.sceneMix1col='#55f';
-		newAppState.sceneMix2col='#55f';
-		newAppState.sceneMixNonecol='#070';
-	}
+		socket = io("wss://"+storage_data.ws+":3334", { transports: ["websocket"] });
+		console.log('connecting');
+		socket.on('connect_error', (error) => {
+			if(setStatusTextG){
+				setStatusTextG(error.toString());
+			}
+			console.log('c error '+error);
+		});
+		socket.on('connect', () => {
+			console.log('conneced');
+			if(gLoggedin){
+				gLoggedin=false;
+				setLoggedInG(true);
+			}
+			socket.emit('getState',uniqueId);
+			console.log('getState');
+		});
+		socket.on('disconnect', () => {
+			console.log('disconneced');
+		});
+		socket.on('error', (error) => {
+			console.log('error '+error);
+		});
+		socket.on('reconnect', (a) => {
+			console.log('reconnect '+a);
+		});
+		socket.on("connect_error", (error) => {
+			console.log('conn error '+error);
+		});
+		socket.on('shot', (data,id) => {
+			if(id == null || uniqueId == id) {
+				setAppStateG({'imgUri':data});
+			}
+		});
+		socket.on('audioLevel', (data,id) => {
+			if(id == null || uniqueId == id) {
+				setAppStateG({'img2Uri':data});
+			}
+		});
+		socket.on('infoText', (data,by) => {
+			setAppStateG({'infoText':data});
+			currentBy = by;
+			currentText = data;
+			if(socket && socket.connected){
+				if(by)socket.emit('respond','delivered: '+data,by);
+			}
+		});
+		socket.on('ytCount', (data) => {
+			setAppStateG({'rtmp2text':data});
+		});
+		socket.on('audio_1', (data) => {
+			setAppStateG({'srt1text':data});
+		});
+		socket.on('audio_2', (data) => {
+			setAppStateG({'srt2text':data});
+		});
+		socket.on('state', (state,reply,id) => {
+			console.log(reply);
+			console.log(id);
+			try{
+			if(reply){
+				if(uniqueId != id) {
+					console.log('reply not for me',uniqueId,id);
+				//	return;
+				}
+			}else{
+				if(uniqueId == id) {
+					console.log('state from self');
+				//	return;
+				}
+			}
+			//if(!setScene1ColG){
+			//	setTimeout(()=>{if(socket && socket.connected) {socket.emit('getState',uniqueId);};},2000);
+			//}
+			
+			var newAppState = {};
+			if(state.sceneMode == 1){
+				sceneMode=1;
+				newAppState.scene1col='#070';
+				newAppState.scene2col='#55f';
+				newAppState.sceneMixcol='#55f';
+				newAppState.sceneMix1col='#55f';
+				newAppState.sceneMix2col='#55f';
+				newAppState.sceneMixNonecol='#55f';
+			}
+			else if(state.sceneMode == 2){
+				sceneMode=2;
+				newAppState.scene1col='#55f';
+				newAppState.scene2col='#070';
+				newAppState.sceneMixcol='#55f';
+				newAppState.sceneMix1col='#55f';
+				newAppState.sceneMix2col='#55f';
+				newAppState.sceneMixNonecol='#55f';
+			}
+			else if(state.sceneMode == 3){
+				sceneMode=3;
+				newAppState.scene1col='#55f';
+				newAppState.scene2col='#55f';
+				newAppState.sceneMixcol='#070';
+				newAppState.sceneMix1col='#55f';
+				newAppState.sceneMix2col='#55f';
+				newAppState.sceneMixNonecol='#55f';
+			}
+			else if(state.sceneMode == 31){
+				sceneMode=3;
+				newAppState.scene1col='#55f';
+				newAppState.scene2col='#55f';
+				newAppState.sceneMixcol='#55f';
+				newAppState.sceneMix1col='#070';
+				newAppState.sceneMix2col='#55f';
+				newAppState.sceneMixNonecol='#55f';
+			}
+			else if(state.sceneMode == 32){
+				sceneMode=3;
+				newAppState.scene1col='#55f';
+				newAppState.scene2col='#55f';
+				newAppState.sceneMixcol='#55f';
+				newAppState.sceneMix1col='#55f';
+				newAppState.sceneMix2col='#070';
+				newAppState.sceneMixNonecol='#55f';
+			}
+			else if(state.sceneMode == 4){
+				sceneMode=4;
+				newAppState.scene1col='#55f';
+				newAppState.scene2col='#55f';
+				newAppState.sceneMixcol='#55f';
+				newAppState.sceneMix1col='#55f';
+				newAppState.sceneMix2col='#55f';
+				newAppState.sceneMixNonecol='#070';
+			}
 
-	if(state.mode == 'intro'){
-		introOn=true;
-		extroOn=false;
-		newAppState.introcol='#070';
-		newAppState.extrocol='#55f';
-	}
-	else if(state.mode == 'extro'){
-		introOn=false;
-		extroOn=true;
-		newAppState.introcol='#55f';
-		newAppState.extrocol='#070';
-	}
-	else if(state.mode == 'normal'){
-		introOn=false;
-		extroOn=false;
-		newAppState.introcol='#55f';
-		newAppState.extrocol='#55f';
-	}
+			if(state.mode == 'intro'){
+				introOn=true;
+				extroOn=false;
+				newAppState.introcol='#070';
+				newAppState.extrocol='#55f';
+			}
+			else if(state.mode == 'extro'){
+				introOn=false;
+				extroOn=true;
+				newAppState.introcol='#55f';
+				newAppState.extrocol='#070';
+			}
+			else if(state.mode == 'normal'){
+				introOn=false;
+				extroOn=false;
+				newAppState.introcol='#55f';
+				newAppState.extrocol='#55f';
+			}
 
-	if(state.map){
-		mapOn=true;
-		newAppState.mapcol='#070';
-	}else{
-		mapOn=false;
-		newAppState.mapcol='#55f';
-	}
-	if(state.map2){
-		map2On=true;
-		newAppState.map2col='#070';
-	}else{
-		map2On=false;
-		newAppState.map2col='#55f';
-	}
+			if(state.map){
+				mapOn=true;
+				newAppState.mapcol='#070';
+			}else{
+				mapOn=false;
+				newAppState.mapcol='#55f';
+			}
+			if(state.map2){
+				map2On=true;
+				newAppState.map2col='#070';
+			}else{
+				map2On=false;
+				newAppState.map2col='#55f';
+			}
 
-	if(state.rec){
-		recOn=true;
-		newAppState.reccol='#070';
-	}else{
-		recOn=false;
-		newAppState.reccol='#55f';
-	}
+			if(state.rec){
+				recOn=true;
+				newAppState.reccol='#070';
+			}else{
+				recOn=false;
+				newAppState.reccol='#55f';
+			}
 
-	if(state.rtmp1){
-		rtmp1On=true;
-		newAppState.rtmp1col='#070';
-	}else{
-		rtmp1On=false;
-		newAppState.rtmp1col='#55f';
-	}
+			if(state.rtmp1){
+				rtmp1On=true;
+				newAppState.rtmp1col='#070';
+			}else{
+				rtmp1On=false;
+				newAppState.rtmp1col='#55f';
+			}
 
-	if(state.rtmp2){
-		rtmp2On=true;
-		newAppState.rtmp2col='#070';
-	}else{
-		rtmp2On=false;
-		newAppState.rtmp2col='#55f';
-	}
+			if(state.rtmp2){
+				rtmp2On=true;
+				newAppState.rtmp2col='#070';
+			}else{
+				rtmp2On=false;
+				newAppState.rtmp2col='#55f';
+			}
 
-	if(state.rtmp3){
-		rtmp3On=true;
-		newAppState.rtmp3col='#070';
-	}else{
-		rtmp3On=false;
-		newAppState.rtmp3col='#55f';
-	}
+			if(state.rtmp3){
+				rtmp3On=true;
+				newAppState.rtmp3col='#070';
+			}else{
+				rtmp3On=false;
+				newAppState.rtmp3col='#55f';
+			}
 
-	if(state.srt1){
-		srt1on = true;
-		newAppState.srt1col='#070';
-	}else{
-		srt1on = false;
-		newAppState.srt1col='#55f';
-		newAppState.srt1text='SRT1';
-	}
+			if(state.srt1){
+				srt1on = true;
+				newAppState.srt1col='#070';
+			}else{
+				srt1on = false;
+				newAppState.srt1col='#55f';
+				newAppState.srt1text='SRT1';
+			}
 
-	if(state.srt2){
-		srt2on = true;
-		newAppState.srt2col='#070';
-	}else{
-		srt2on = false;
-		newAppState.srt2col='#55f';
-		newAppState.srt2text='SRT2';
-	}
+			if(state.srt2){
+				srt2on = true;
+				newAppState.srt2col='#070';
+			}else{
+				srt2on = false;
+				newAppState.srt2col='#55f';
+				newAppState.srt2text='SRT2';
+			}
 
-	if(state.srt1mute){
-		srt1mute = true;
-		newAppState.srt1mutetext=' M';
-	}else{
-		srt1mute = false;
-		newAppState.srt1mutetext='';
-	}
+			if(state.srt1mute){
+				srt1mute = true;
+				newAppState.srt1mutetext=' M';
+			}else{
+				srt1mute = false;
+				newAppState.srt1mutetext='';
+			}
 
-	if(state.srt2mute){
-		srt2mute = true;
-		newAppState.srt2mutetext=' M';
-	}else{
-		srt2mute = false;
-		newAppState.srt2mutetext='';
-	}
-	setAppStateG(newAppState);
-	console.log(JSON.stringify(state));
-	} catch (e){
+			if(state.srt2mute){
+				srt2mute = true;
+				newAppState.srt2mutetext=' M';
+			}else{
+				srt2mute = false;
+				newAppState.srt2mutetext='';
+			}
+			setAppStateG(newAppState);
+			console.log(JSON.stringify(state));
+			} catch (e){
+				console.log(e);
+			}
+		});
+	}catch(e){
 		console.log(e);
 	}
-});
-}catch(e){
-	console.log(e);
-}
 };
 
 console.log(uniqueId);
@@ -758,11 +760,15 @@ var watchId = null;
 var gLoggedin = false;
 
 const setUrl = function(url) {
-	AsyncStorage.setItem('obsctrl_data',JSON.stringify({ws:url}));
-	storage_data = {ws:url};
+	storage_data.ws = url;
+	AsyncStorage.setItem('obsctrl_data',JSON.stringify(storage_data));
 	console.log(url);
 	gLoggedin=true;
 	connectSocket();
+}
+const setSize = function(size) {
+	storage_data.buttonSize = size;
+	AsyncStorage.setItem('obsctrl_data',JSON.stringify(storage_data));
 }
 
 const requestLocationPermission = async () => {
@@ -833,6 +839,7 @@ async function getStorageData(){
 		if(value) {
 			storage_data = JSON.parse(value);
 			if(setUrlStateG)setUrlStateG(storage_data.ws);
+			if(setSizeStateG)setSizeStateG(storage_data.buttonSize);
 			if(storage_data.ws){
 				if(!socket || !socket.connected){
 					connectSocket();
@@ -919,112 +926,112 @@ class App extends Component {
 					</View>
 					<View style={{flexDirection: "row",flex:1}}>
 						<View style={{ flex: 1,padding:3 }}>
-							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:"#55f"}} onPress={requestLocationPermission}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: storage_data&&storage_data.buttonSize?storage_data.buttonSize:8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:"#55f"}} onPress={requestLocationPermission}>
 								<Text style={styles.textButton}>{this.state.gpsText}</Text>
 							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
-							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.srt1col}} onPress={socketSrt1mute}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: storage_data&&storage_data.buttonSize?storage_data.buttonSize:8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.srt1col}} onPress={socketSrt1mute}>
 								<Text style={styles.textButton}>{this.state.srt1text + this.state.srt1mutetext}</Text>
 							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
-							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.srt2col}} onPress={socketSrt2mute}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: storage_data&&storage_data.buttonSize?storage_data.buttonSize:8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.srt2col}} onPress={socketSrt2mute}>
 								<Text style={styles.textButton}>{this.state.srt2text + this.state.srt2mutetext}</Text>
 							</PlattformedButton>
 						</View>
 					</View>
 					<View style={{flexDirection: "row",flex:1}}>
 						<View style={{ flex: 1,padding:3 }}>
-							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.mapcol}} onPress={socketMap}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: storage_data&&storage_data.buttonSize?storage_data.buttonSize:8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.mapcol}} onPress={socketMap}>
 								<Text style={styles.textButton}>Map</Text>
 							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
-							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.clearcol}} onPress={socketMapClear}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: storage_data&&storage_data.buttonSize?storage_data.buttonSize:8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.clearcol}} onPress={socketMapClear}>
 								<Text style={styles.textButton}>Clear</Text>
 							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1,padding:3 }}>
-							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.map2col}} onPress={socketMap2}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: storage_data&&storage_data.buttonSize?storage_data.buttonSize:8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.map2col}} onPress={socketMap2}>
 								<Text style={styles.textButton}>Map2</Text>
 							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
-							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.clear2col}} onPress={socketMap2Clear}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: storage_data&&storage_data.buttonSize?storage_data.buttonSize:8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.clear2col}} onPress={socketMap2Clear}>
 								<Text style={styles.textButton}>Clear2</Text>
 							</PlattformedButton>
 						</View>
 					</View>
 					<View style={{flexDirection: "row",flex:1}}>
 						<View style={{ flex: 1,padding:3 }}>
-							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.introcol}} onPress={socketIntro}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: storage_data&&storage_data.buttonSize?storage_data.buttonSize:8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.introcol}} onPress={socketIntro}>
 								<Text style={styles.textButton}>Intro</Text>
 							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1, padding:3 }}>
-							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.extrocol}} onPress={socketExtro}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: storage_data&&storage_data.buttonSize?storage_data.buttonSize:8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.extrocol}} onPress={socketExtro}>
 								<Text style={styles.textButton}>Extro</Text>
 							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1, padding:3 }}>
-							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.tweetcol}} onPress={socketTweet}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: storage_data&&storage_data.buttonSize?storage_data.buttonSize:8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.tweetcol}} onPress={socketTweet}>
 								<Text style={styles.textButton}>Tweet</Text>
 							</PlattformedButton>
 						</View>
 					</View>
 					<View style={{flexDirection: "row",flex:1}}>
 						<View style={{ flex: 1,padding:3 }}>
-							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.rtmp1col}} onPress={socketRtmp1}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: storage_data&&storage_data.buttonSize?storage_data.buttonSize:8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.rtmp1col}} onPress={socketRtmp1}>
 								<Text style={styles.textButton}>RTMP1</Text>
 							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1, padding:3 }}>
-							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.rtmp2col}} onPress={socketRtmp2}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: storage_data&&storage_data.buttonSize?storage_data.buttonSize:8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.rtmp2col}} onPress={socketRtmp2}>
 								<Text style={styles.textButton}>{this.state.rtmp2text}</Text>
 							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
-							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.rtmp3col}} onPress={socketRtmp3}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: storage_data&&storage_data.buttonSize?storage_data.buttonSize:8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.rtmp3col}} onPress={socketRtmp3}>
 								<Text style={styles.textButton}>RTMP3</Text>
 							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
-							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.reccol}} onPress={socketRec}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: storage_data&&storage_data.buttonSize?storage_data.buttonSize:8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.reccol}} onPress={socketRec}>
 								<Text style={styles.textButton}>Rec</Text>
 							</PlattformedButton>
 						</View>
 					</View>
 					<View style={{flexDirection: "row",flex:1}}>
 						<View style={{ flex: 1,padding:3}}>
-							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.scene1col}} onPress={socketScene1}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: storage_data&&storage_data.buttonSize?storage_data.buttonSize:8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.scene1col}} onPress={socketScene1}>
 								<Text style={styles.textButton}>1</Text>
 							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1, padding:3 }}>
-							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.scene2col}} onPress={socketScene2}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: storage_data&&storage_data.buttonSize?storage_data.buttonSize:8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.scene2col}} onPress={socketScene2}>
 								<Text style={styles.textButton}>2</Text>
 							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
-							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMixcol}} onPress={socketSceneMix}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: storage_data&&storage_data.buttonSize?storage_data.buttonSize:8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMixcol}} onPress={socketSceneMix}>
 								<Text style={styles.textButton}>Mix</Text>
 							</PlattformedButton>
 						</View>
 					</View>
 					<View style={{flexDirection: "row",flex:1}}>
 						<View style={{ flex: 1, padding:3 }}>
-							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMix1col}} onPress={socketSceneMix1}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: storage_data&&storage_data.buttonSize?storage_data.buttonSize:8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMix1col}} onPress={socketSceneMix1}>
 								<Text style={styles.textButton}>Mix1</Text>
 							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1, padding:3 }}>
-							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMix2col}} onPress={socketSceneMix2}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: storage_data&&storage_data.buttonSize?storage_data.buttonSize:8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMix2col}} onPress={socketSceneMix2}>
 								<Text style={styles.textButton}>Mix2</Text>
 							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
-							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMixNonecol}} onPress={socketSceneMixNone}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: storage_data&&storage_data.buttonSize?storage_data.buttonSize:8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMixNonecol}} onPress={socketSceneMixNone}>
 								<Text style={styles.textButton}>None</Text>
 							</PlattformedButton>
 						</View>
@@ -1051,7 +1058,7 @@ class App extends Component {
 					</View>
 					<View style={{flexDirection: "row",flex:1}}>
 						<View style={{ flex: 1, padding:3 }}>
-							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:"#55f"}} onPress={function(){console.log('aa');gLoggedin=false;setLoggedInG(false);}}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: storage_data&&storage_data.buttonSize?storage_data.buttonSize:8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:"#55f"}} onPress={function(){console.log('aa');gLoggedin=false;setLoggedInG(false);}}>
 								<Text style={styles.textButton}>Settings</Text>
 							</PlattformedButton>
 						</View>
@@ -1092,11 +1099,14 @@ class Settings extends Component {
 		this.state = {
 			currentTheme: Appearance.getColorScheme(),
 			url: storage_data?storage_data.ws:'',
+			buttonSize: (storage_data&&storage_data.buttonSize)?storage_data.buttonSize:8,
 			statusText:''
 		};
 		this.url=storage_data?storage_data.ws:'';
+		this.buttonSize= (storage_data&&storage_data.buttonSize)?storage_data.buttonSize:8;
 		setStatusTextG=this.setStatusText.bind(this);
 		setUrlStateG=this.setUrlState.bind(this);
+		setSizeStateG=this.setSizeState.bind(this);
 		this.subscription = Appearance.addChangeListener(({ colorScheme }) => {
 			this.setState({currentTheme:Appearance.getColorScheme()});
 		});
@@ -1115,9 +1125,17 @@ class Settings extends Component {
 	}
 	setUrlState(url){
 		this.setState({url:url});
+		this.url=url;
+	}
+	setSizeState(size){
+		this.setState({buttonSize:size});
+		this.buttonSize=size;
 	}
 	setUrl(url){
 		this.url=url;
+	}
+	setSize(val){
+		this.buttonSize=val;
 	}
 
 	render() {
@@ -1142,7 +1160,22 @@ class Settings extends Component {
 						</View>
 						<View style={{flexDirection: "row",flex:1}}>
 							<View style={{ flex: 1,padding:12 }}>
-								<Button title="OK" onPress={()=>{if (!isWebUri("https://"+this.url+":3334")) {this.setStatusText("Not a valid host: \""+this.url+"\"") }else{this.setStatusText("");setUrl(this.url)}}}>
+								<StyledText style={styles.text}>Button Size:</StyledText>
+							</View>
+						</View>
+						<View style={{padding:12}}>
+							<Slider
+								style={{flex:1}}
+								step={1}
+								onValueChange={val => this.setSize(val)}
+								value={this.state.buttonSize}
+								minimumValue={2}
+								maximumValue={8}
+							/>
+						</View>
+						<View style={{flexDirection: "row",flex:1}}>
+							<View style={{ flex: 1,padding:12 }}>
+								<Button title="OK" onPress={()=>{setSize(this.buttonSize);if (!isWebUri("https://"+this.url+":3334")) {this.setStatusText("Not a valid host: \""+this.url+"\"") }else{this.setStatusText("");setUrl(this.url)}}}>
 								</Button>
 							</View>
 							<View style={{ flex: 1,padding:12 }}>
