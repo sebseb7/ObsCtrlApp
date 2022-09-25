@@ -919,16 +919,19 @@ class App extends Component {
 					</View>
 					<View style={{flexDirection: "row",flex:1}}>
 						<View style={{ flex: 1,padding:3 }}>
-							<Button title={this.state.gpsText} color="#55f" onPress={requestLocationPermission}>
-							</Button>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:"#55f"}} onPress={requestLocationPermission}>
+								<Text style={styles.textButton}>{this.state.gpsText}</Text>
+							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
-							<Button title={this.state.srt1text + this.state.srt1mutetext} color={this.state.srt1col} onPress={socketSrt1mute}>
-							</Button>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.srt1col}} onPress={socketSrt1mute}>
+								<Text style={styles.textButton}>{this.state.srt1text + this.state.srt1mutetext}</Text>
+							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
-							<Button title={this.state.srt2text + this.state.srt2mutetext} color={this.state.srt2col} onPress={socketSrt2mute}>
-							</Button>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.srt2col}} onPress={socketSrt2mute}>
+								<Text style={styles.textButton}>{this.state.srt2text + this.state.srt2mutetext}</Text>
+							</PlattformedButton>
 						</View>
 					</View>
 					<View style={{flexDirection: "row",flex:1}}>
@@ -938,92 +941,92 @@ class App extends Component {
 							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.clearcol}} onPress={socketMapClear}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.clearcol}} onPress={socketMapClear}>
 								<Text style={styles.textButton}>Clear</Text>
-							</Pressable>
+							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1,padding:3 }}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.map2col}} onPress={socketMap2}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.map2col}} onPress={socketMap2}>
 								<Text style={styles.textButton}>Map2</Text>
-							</Pressable>
+							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.clear2col}} onPress={socketMap2Clear}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.clear2col}} onPress={socketMap2Clear}>
 								<Text style={styles.textButton}>Clear2</Text>
-							</Pressable>
+							</PlattformedButton>
 						</View>
 					</View>
 					<View style={{flexDirection: "row",flex:1}}>
 						<View style={{ flex: 1,padding:3 }}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.introcol}} onPress={socketIntro}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.introcol}} onPress={socketIntro}>
 								<Text style={styles.textButton}>Intro</Text>
-							</Pressable>
+							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1, padding:3 }}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.extrocol}} onPress={socketExtro}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.extrocol}} onPress={socketExtro}>
 								<Text style={styles.textButton}>Extro</Text>
-							</Pressable>
+							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1, padding:3 }}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.tweetcol}} onPress={socketTweet}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.tweetcol}} onPress={socketTweet}>
 								<Text style={styles.textButton}>Tweet</Text>
-							</Pressable>
+							</PlattformedButton>
 						</View>
 					</View>
 					<View style={{flexDirection: "row",flex:1}}>
 						<View style={{ flex: 1,padding:3 }}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.rtmp1col}} onPress={socketRtmp1}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.rtmp1col}} onPress={socketRtmp1}>
 								<Text style={styles.textButton}>RTMP1</Text>
-							</Pressable>
+							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1, padding:3 }}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.rtmp2col}} onPress={socketRtmp2}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.rtmp2col}} onPress={socketRtmp2}>
 								<Text style={styles.textButton}>{this.state.rtmp2text}</Text>
-							</Pressable>
+							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.rtmp3col}} onPress={socketRtmp3}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.rtmp3col}} onPress={socketRtmp3}>
 								<Text style={styles.textButton}>RTMP3</Text>
-							</Pressable>
+							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.reccol}} onPress={socketRec}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.reccol}} onPress={socketRec}>
 								<Text style={styles.textButton}>Rec</Text>
-							</Pressable>
+							</PlattformedButton>
 						</View>
 					</View>
 					<View style={{flexDirection: "row",flex:1}}>
 						<View style={{ flex: 1,padding:3}}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.scene1col}} onPress={socketScene1}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.scene1col}} onPress={socketScene1}>
 								<Text style={styles.textButton}>1</Text>
-							</Pressable>
+							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1, padding:3 }}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.scene2col}} onPress={socketScene2}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.scene2col}} onPress={socketScene2}>
 								<Text style={styles.textButton}>2</Text>
-							</Pressable>
+							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMixcol}} onPress={socketSceneMix}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMixcol}} onPress={socketSceneMix}>
 								<Text style={styles.textButton}>Mix</Text>
-							</Pressable>
+							</PlattformedButton>
 						</View>
 					</View>
 					<View style={{flexDirection: "row",flex:1}}>
 						<View style={{ flex: 1, padding:3 }}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMix1col}} onPress={socketSceneMix1}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMix1col}} onPress={socketSceneMix1}>
 								<Text style={styles.textButton}>Mix1</Text>
-							</Pressable>
+							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1, padding:3 }}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMix2col}} onPress={socketSceneMix2}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMix2col}} onPress={socketSceneMix2}>
 								<Text style={styles.textButton}>Mix2</Text>
-							</Pressable>
+							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
-							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMixNonecol}} onPress={socketSceneMixNone}>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMixNonecol}} onPress={socketSceneMixNone}>
 								<Text style={styles.textButton}>None</Text>
-							</Pressable>
+							</PlattformedButton>
 						</View>
 					</View>
 					<View style={{flexDirection: "row",flex:1}}>
@@ -1048,8 +1051,9 @@ class App extends Component {
 					</View>
 					<View style={{flexDirection: "row",flex:1}}>
 						<View style={{ flex: 1, padding:3 }}>
-							<Button title="Settings" color="#55f" onPress={function(){console.log('aa');gLoggedin=false;setLoggedInG(false);}}>
-							</Button>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:"#55f"}} onPress={function(){console.log('aa');gLoggedin=false;setLoggedInG(false);}}>
+								<Text style={styles.textButton}>Settings</Text>
+							</PlattformedButton>
 						</View>
 					</View>
 				</ScrollView>
@@ -1183,10 +1187,10 @@ class Main extends Component {
 }
 
 const StyledSafeAreaView = styled.SafeAreaView`
-    background-color: ${props => props.theme.background};
+	background-color: ${props => props.theme.background};
 `;
 const StyledText = styled.Text`
-    color: ${props => props.theme.foreground};
+	color: ${props => props.theme.foreground};
 `;
 
 const styles = StyleSheet.create({
