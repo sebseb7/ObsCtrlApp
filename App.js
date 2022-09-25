@@ -794,13 +794,12 @@ const requestLocationPermission = async () => {
 			setAppStateG({'gpsText':'GPS OK'});
 			watchId = Geolocation.watchPosition(
 				position => {
-					setT('got loc');
 					const initialPosition = JSON.stringify(position);
 					console.log('GPS:'+JSON.stringify(initialPosition));
 					if(socket && socket.connected){
 						socket.emit('tpv2',{lat:position.coords.latitude,lon:position.coords.longitude,speed:position.coords.speed});
 						socket_counter++;
-						setAppStateG({'gpsText':socket_counter});
+						setAppStateG({'gpsText':socket_counter.toString()});
 					}else{
 						setAppStateG({'gpsText':'NO CONN'});
 					}
