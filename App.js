@@ -13,9 +13,13 @@ import {
 	View,
 	Image,
 	Pressable,
-	TouchableOpacity
+	TouchableOpacity,
+	TouchableNativeFeedback,
+	Platform
 } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
+import {ThemeProvider} from 'styled-components';
+import styled from 'styled-components/native';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import { isWebUri } from 'valid-url';
@@ -902,18 +906,18 @@ class App extends Component {
 	}
 
 	render() {
-		const backgroundStyle = {userSelect: 'none'};
+		const backgroundStyle = {backgroundColor:'#000',flex:1,userSelect: 'none'};
 		
 		return (
 			<SafeAreaView style={backgroundStyle}>
 				<StatusBar barStyle={this.state.currentTheme ? 'light-content' : 'dark-content'} />
 				<ScrollView contentInsetAdjustmentBehavior="automatic" style={{margin:1}}>
-					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff'}}>
+					<View>
 						<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:'#000'}} onPress={()=>{confirmText();}}>
 							<Text style={{color:'#f00'}}>{this.state.infoText}</Text>
 						</Pressable>
 					</View>
-					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
+					<View style={{flexDirection: "row",flex:1}}>
 						<View style={{ flex: 1,padding:3 }}>
 							<Button title={this.state.gpsText} color="#55f" onPress={requestLocationPermission}>
 							</Button>
@@ -927,102 +931,102 @@ class App extends Component {
 							</Button>
 						</View>
 					</View>
-					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
+					<View style={{flexDirection: "row",flex:1}}>
 						<View style={{ flex: 1,padding:3 }}>
-							<TouchableOpacity style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.mapcol}} onPress={socketMap}>
-								<Text style={styles.text}>Map</Text>
-							</TouchableOpacity>
+							<PlattformedButton style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.mapcol}} onPress={socketMap}>
+								<Text style={styles.textButton}>Map</Text>
+							</PlattformedButton>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
 							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.clearcol}} onPress={socketMapClear}>
-								<Text style={styles.text}>Clear</Text>
+								<Text style={styles.textButton}>Clear</Text>
 							</Pressable>
 						</View>
 						<View style={{ flex: 1,padding:3 }}>
 							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.map2col}} onPress={socketMap2}>
-								<Text style={styles.text}>Map2</Text>
+								<Text style={styles.textButton}>Map2</Text>
 							</Pressable>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
 							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.clear2col}} onPress={socketMap2Clear}>
-								<Text style={styles.text}>Clear2</Text>
+								<Text style={styles.textButton}>Clear2</Text>
 							</Pressable>
 						</View>
 					</View>
-					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
+					<View style={{flexDirection: "row",flex:1}}>
 						<View style={{ flex: 1,padding:3 }}>
 							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.introcol}} onPress={socketIntro}>
-								<Text style={styles.text}>Intro</Text>
+								<Text style={styles.textButton}>Intro</Text>
 							</Pressable>
 						</View>
 						<View style={{ flex: 1, padding:3 }}>
 							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.extrocol}} onPress={socketExtro}>
-								<Text style={styles.text}>Extro</Text>
+								<Text style={styles.textButton}>Extro</Text>
 							</Pressable>
 						</View>
 						<View style={{ flex: 1, padding:3 }}>
 							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.tweetcol}} onPress={socketTweet}>
-								<Text style={styles.text}>Tweet</Text>
+								<Text style={styles.textButton}>Tweet</Text>
 							</Pressable>
 						</View>
 					</View>
-					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
+					<View style={{flexDirection: "row",flex:1}}>
 						<View style={{ flex: 1,padding:3 }}>
 							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.rtmp1col}} onPress={socketRtmp1}>
-								<Text style={styles.text}>RTMP1</Text>
+								<Text style={styles.textButton}>RTMP1</Text>
 							</Pressable>
 						</View>
 						<View style={{ flex: 1, padding:3 }}>
 							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.rtmp2col}} onPress={socketRtmp2}>
-								<Text style={styles.text}>{this.state.rtmp2text}</Text>
+								<Text style={styles.textButton}>{this.state.rtmp2text}</Text>
 							</Pressable>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
 							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.rtmp3col}} onPress={socketRtmp3}>
-								<Text style={styles.text}>RTMP3</Text>
+								<Text style={styles.textButton}>RTMP3</Text>
 							</Pressable>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
 							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.reccol}} onPress={socketRec}>
-								<Text style={styles.text}>Rec</Text>
+								<Text style={styles.textButton}>Rec</Text>
 							</Pressable>
 						</View>
 					</View>
-					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
+					<View style={{flexDirection: "row",flex:1}}>
 						<View style={{ flex: 1,padding:3}}>
 							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.scene1col}} onPress={socketScene1}>
-								<Text style={styles.text}>1</Text>
+								<Text style={styles.textButton}>1</Text>
 							</Pressable>
 						</View>
 						<View style={{ flex: 1, padding:3 }}>
 							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.scene2col}} onPress={socketScene2}>
-								<Text style={styles.text}>2</Text>
+								<Text style={styles.textButton}>2</Text>
 							</Pressable>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
 							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMixcol}} onPress={socketSceneMix}>
-								<Text style={styles.text}>Mix</Text>
+								<Text style={styles.textButton}>Mix</Text>
 							</Pressable>
 						</View>
 					</View>
-					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
+					<View style={{flexDirection: "row",flex:1}}>
 						<View style={{ flex: 1, padding:3 }}>
 							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMix1col}} onPress={socketSceneMix1}>
-								<Text style={styles.text}>Mix1</Text>
+								<Text style={styles.textButton}>Mix1</Text>
 							</Pressable>
 						</View>
 						<View style={{ flex: 1, padding:3 }}>
 							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMix2col}} onPress={socketSceneMix2}>
-								<Text style={styles.text}>Mix2</Text>
+								<Text style={styles.textButton}>Mix2</Text>
 							</Pressable>
 						</View>
 						<View style={{ flex: 1 ,padding:3}}>
 							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 8,paddingHorizontal: 0,borderRadius: 2,elevation: 3,backgroundColor:this.state.sceneMixNonecol}} onPress={socketSceneMixNone}>
-								<Text style={styles.text}>None</Text>
+								<Text style={styles.textButton}>None</Text>
 							</Pressable>
 						</View>
 					</View>
-					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
+					<View style={{flexDirection: "row",flex:1}}>
 						<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 0,paddingHorizontal: 0,borderRadius: 0,elevation: 0}} onPress={socketShot}>
 							<Image
 								style={{width: 198,height: 108}}
@@ -1032,7 +1036,7 @@ class App extends Component {
 							/>
 						</Pressable>
 					</View>
-					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
+					<View style={{flexDirection: "row",flex:1}}>
 						<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 0,paddingHorizontal: 0,borderRadius: 0,elevation: 0}} onPress={socketAudioLevel}>
 							<Image
 								style={{width: 198,height: 108}}
@@ -1042,7 +1046,7 @@ class App extends Component {
 							/>
 						</Pressable>
 					</View>
-					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
+					<View style={{flexDirection: "row",flex:1}}>
 						<View style={{ flex: 1, padding:3 }}>
 							<Button title="Settings" color="#55f" onPress={function(){console.log('aa');gLoggedin=false;setLoggedInG(false);}}>
 							</Button>
@@ -1053,23 +1057,51 @@ class App extends Component {
 		);
 	}
 }
-
+class PlattformedButton extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+		};
+	}
+	render() {
+		if(Platform.OS=='web'){
+			return (
+				<TouchableOpacity style={this.props.style} onPress={this.props.onPress}>
+					{this.props.children}
+				</TouchableOpacity>
+			);
+		}
+		else if(Platform.OS=='android'){
+			return (
+				<TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('white',false)} onPress={this.props.onPress}>
+					<View style={this.props.style}>
+						{this.props.children}
+					</View>
+				</TouchableNativeFeedback>
+			);
+		}
+	}
+}
 class Settings extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			currentTheme: Appearance.getColorScheme()==='dark',
+			currentTheme: Appearance.getColorScheme(),
 			url: storage_data?storage_data.ws:'',
 			statusText:''
 		};
 		this.url=storage_data?storage_data.ws:'';
 		setStatusTextG=this.setStatusText.bind(this);
 		setUrlStateG=this.setUrlState.bind(this);
+		this.subscription = Appearance.addChangeListener(({ colorScheme }) => {
+			this.setState({currentTheme:Appearance.getColorScheme()});
+		});
 	}
 	
 	componentWillUnmount()
 	{
 		setStatusTextG=function(){};
+		this.subscription.remove()
 	}
 	componentDidMount(){
 	}
@@ -1085,41 +1117,43 @@ class Settings extends Component {
 	}
 
 	render() {
-		const backgroundStyle = {userSelect: 'none'};
+		const backgroundStyle = {flex:1,userSelect: 'none'};
 	
 		return (
-			<SafeAreaView style={backgroundStyle}>
-				<StatusBar barStyle={this.state.currentTheme ? 'light-content' : 'dark-content'} />
-				<ScrollView contentInsetAdjustmentBehavior="automatic" style={{margin:1}}>
-					<View style={{flexDirection: "row",flex:1}}>
-						<View style={{ flex: 1,padding:12 }}>
-							<Text style={styles.text}>ObsCtrl Backend Hostname:</Text>
+			<ThemeProvider theme={this.state.currentTheme === 'dark' ? darkTheme : lightTheme}>
+				<StyledSafeAreaView style={backgroundStyle}>
+					<StatusBar style="auto"/>
+					<ScrollView contentInsetAdjustmentBehavior="automatic" style={{margin:1}}>
+						<View style={{flexDirection: "row",flex:1}}>
+							<View style={{ flex: 1,padding:12 }}>
+								<StyledText style={styles.text}>ObsCtrl Backend Hostname:</StyledText>
+							</View>
 						</View>
-					</View>
-					<View>
-						<TextInput
-							style={{...styles.input,backgroundColor:'#fff',color:'#000'}}
-							onChangeText={newText => this.setUrl(newText)}
-							defaultValue={this.state.url}
-						/>
-					</View>
-					<View style={{flexDirection: "row",flex:1}}>
-						<View style={{ flex: 1,padding:12 }}>
-							<Button title="OK" onPress={()=>{if (!isWebUri("https://"+this.url+":3334")) {this.setStatusText("Not a valid host: \""+this.url+"\"") }else{this.setStatusText("");setUrl(this.url)}}}>
-							</Button>
+						<View>
+							<TextInput
+								style={{...styles.input,backgroundColor:'#fff',color:'#000'}}
+								onChangeText={newText => this.setUrl(newText)}
+								defaultValue={this.state.url}
+							/>
 						</View>
-						<View style={{ flex: 1,padding:12 }}>
-							<Button title="Cancel" onPress={()=>{if(socket && socket.connected)setLoggedInG(true)}}>
-							</Button>
+						<View style={{flexDirection: "row",flex:1}}>
+							<View style={{ flex: 1,padding:12 }}>
+								<Button title="OK" onPress={()=>{if (!isWebUri("https://"+this.url+":3334")) {this.setStatusText("Not a valid host: \""+this.url+"\"") }else{this.setStatusText("");setUrl(this.url)}}}>
+								</Button>
+							</View>
+							<View style={{ flex: 1,padding:12 }}>
+								<Button title="Cancel" onPress={()=>{if(socket && socket.connected)setLoggedInG(true)}}>
+								</Button>
+							</View>
 						</View>
-					</View>
-					<View style={{flexDirection: "row",flex:1}}>
-						<View style={{ flex: 1,padding:12 }}>
-							<Text style={{...styles.text,color:'#f00'}}>{this.state.statusText}</Text>
+						<View style={{flexDirection: "row",flex:1}}>
+							<View style={{ flex: 1,padding:12 }}>
+								<Text style={{...styles.text,color:'#f00'}}>{this.state.statusText}</Text>
+							</View>
 						</View>
-					</View>
-				</ScrollView>
-			</SafeAreaView>
+					</ScrollView>
+				</StyledSafeAreaView>
+			</ThemeProvider>
 		);
 	}
 }
@@ -1148,13 +1182,23 @@ class Main extends Component {
 	}
 }
 
+const StyledSafeAreaView = styled.SafeAreaView`
+    background-color: ${props => props.theme.background};
+`;
+const StyledText = styled.Text`
+    color: ${props => props.theme.foreground};
+`;
+
 const styles = StyleSheet.create({
-	highlight: {
-		fontWeight: '700',
-	},
 	text: {
 		fontSize: 24,
-		fontWeight: 500,
+		fontSize: 14,
+		fontFamily: "'Segoe UI',Roboto,Helvetica,Arial,sans-serif"
+	},
+	textButton: {
+		color: '#000',
+		fontSize: 24,
+		fontWeight: '600',
 		fontSize: 14,
 		fontFamily: "'Segoe UI',Roboto,Helvetica,Arial,sans-serif"
 	},
@@ -1165,5 +1209,13 @@ const styles = StyleSheet.create({
 		padding: 10,
 	},
 });
+const darkTheme = {
+	background: "#121212",
+	foreground: "#fff",
+}
+const lightTheme = {
+	background: "#fff",
+	foreground: "#000",
+}
 
 export default Main;
