@@ -21,7 +21,7 @@
     "react-native": "0.70.1",
     "react-native-get-random-values": "^1.8.0",
     "react-native-web": "^0.18.9",
-    "socket.io-client": "^4.5.2",
+    "socket.io-client": "4.5.1",
     "uuid": "^9.0.0",
     "valid-url": "^1.0.9"
   },

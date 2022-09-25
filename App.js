@@ -1,97 +1,41 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
-import React, { useState,useEffect } from 'react';
+import React, { Component } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  PermissionsAndroid,
-  Button,
-  Text,
-  TextInput,
-  useColorScheme,
-  View,
-  Image,
-  Pressable
+	Appearance,
+	SafeAreaView,
+	ScrollView,
+	StatusBar,
+	StyleSheet,
+	PermissionsAndroid,
+	Button,
+	Text,
+	TextInput,
+	View,
+	Image,
+	Pressable,
+	TouchableHighlight
 } from 'react-native';
-
 import Geolocation from '@react-native-community/geolocation';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import { isWebUri } from 'valid-url';
-
-var uniqueId = uuidv4();
-
-console.log('UID',uniqueId);
 const io = require("socket.io-client");
-var socket;
-
-const isGPSSent = false;
-
 import { LogBox } from 'react-native';
 LogBox.ignoreLogs(['new NativeEventEmitter']);
 
-var gpsButtonC = '#55f';
+const uniqueId = uuidv4();
 
-function setGpsButtonColor(c) {
-	gpsButtonC=c;
-}
-
-function getGpsButtonColor() {
-	return gpsButtonC;
-}
-
-
-var setter;
-function registerT(f){setter=f};
-function setT(t){
-	if(setter)setter(t);
-}
+console.log('UID',uniqueId);
+var socket;
 
 var socket_counter = 0;
-
 var gps_active = false;
 
-
-var setUrlG;
+var setAppStateG2=function(){};
 var setStatusTextG;
+var setUrlStateG;
 var setLoggedInG;
-var setMapColG;
-var setMap2ColG;
-var setRecColG;
-var setClearColG;
-var setClear2ColG;
-var setrtmp1ColG;
-var setrtmp2ColG;
-var setrtmp3ColG;
-var setScene1ColG;
-var setScene2ColG;
-var setSceneMixColG;
-var setSceneMix1ColG;
-var setSceneMixNoneColG;
-var setSceneMix2ColG;
-var setIntroColG;
-var setExtroColG;
-var setSrt1ColG;
-var setSrt2ColG;
-var setSrt1muteColG;
-var setSrt2muteColG;
-var setImgUriG;
-var setImg2UriG;
-var setTweetColG;
-var setInfoTextG;
-var setRtmp2TextG;
-var setSrt1TextG;
-var setSrt2TextG;
+
 var srt1on = false;
 var srt2on = false;
 var srt1mute = false;
@@ -104,13 +48,13 @@ const socketSrt1mute = () => {
 		if(socket && socket.connected){
 			socket.emit('srt1muteOff',uniqueId);
 			srt1mute=false;
-			setSrt1muteColG('');
+			setAppStateG({srt1mutetext:''});
 		}
 	}else{
 		if(socket && socket.connected){
 			socket.emit('srt1mute',uniqueId);
 			srt1mute=true;
-			setSrt1muteColG('#f55');
+			setAppStateG({srt1mutetext:' M'});
 		}
 	}
 }
@@ -119,13 +63,13 @@ const socketSrt2mute = () => {
 		if(socket && socket.connected){
 			socket.emit('srt2muteOff',uniqueId);
 			srt2mute=false;
-			setSrt2muteColG('');
+			setAppStateG({srt2mutetext:''});
 		}
 	}else{
 		if(socket && socket.connected){
 			socket.emit('srt2mute',uniqueId);
 			srt2mute=true;
-			setSrt2muteColG('#f55');
+			setAppStateG({srt2mutetext:' M'});
 		}
 	}
 }
@@ -134,15 +78,15 @@ const socketMap = () => {
 		if(socket && socket.connected){
 			socket.emit('mapoff',uniqueId);
 			mapOn=false;
-			setMapColG('#55f');
+			setAppStateG({mapcol:'#55f'});
 		}
 	}else{
 		if(socket && socket.connected){
 			socket.emit('mapon',uniqueId);
 			mapOn=true;
 			map2On=false;
-			setMapColG('#070');
-			setMap2ColG('#55f');
+			setAppStateG({mapcol:'#070'});
+			setAppStateG({map2col:'#55f'});
 		}
 	}
 }
@@ -151,15 +95,15 @@ const socketMap2 = () => {
 		if(socket && socket.connected){
 			socket.emit('mapoff2',uniqueId);
 			map2On=false;
-			setMap2ColG('#55f');
+			setAppStateG({map2col:'#55f'});
 		}
 	}else{
 		if(socket && socket.connected){
 			socket.emit('mapon2',uniqueId);
 			map2On=true;
 			mapOn=false;
-			setMap2ColG('#070');
-			setMapColG('#55f');
+			setAppStateG({mapcol:'#55f'});
+			setAppStateG({map2col:'#070'});
 		}
 	}
 }
@@ -167,54 +111,54 @@ var clearPress = false;
 var clear2Press = false;
 const socketMapClear = () => {
 	if(!clearPress){
-		setClearColG('#f55');
+		setAppStateG({clearcol:'#f55'});
 		clearPress=true;
 		setTimeout(()=>{
 			if(clearPress){
-				setClearColG('#55f');
+				setAppStateG({clearcol:'#55f'});
 				clearPress=false;
 			}
 		},2000);
 	}
-    else if(socket && socket.connected){
+	else if(socket && socket.connected){
 		clearPress=false;
-		setClearColG('#55f');
+		setAppStateG({clearcol:'#55f'});
 		socket.emit('clear3',uniqueId);
 	}
 }
 const socketMap2Clear = () => {
 	if(!clear2Press){
-		setClear2ColG('#f55');
+		setAppStateG({clear2col:'#f55'});
 		clear2Press=true;
 		setTimeout(()=>{
 			if(clear2Press){
-				setClear2ColG('#55f');
+				setAppStateG({clear2col:'#55f'});
 				clear2Press=false;
 			}
 		},2000);
 	}
-    else if(socket && socket.connected){
+	else if(socket && socket.connected){
 		clear2Press=false;
-		setClear2ColG('#55f');
+		setAppStateG({clear2col:'#55f'});
 		socket.emit('clear2',uniqueId);
 	}
 }
 var tweetPress = false;
 const socketTweet = () => {
 	if(!tweetPress){
-		setTweetColG('#f55');
+		setAppStateG({tweetcol:'#f55'});
 		tweetPress=true;
 		setTimeout(()=>{
 			if(tweetPress){
-				setTweetColG('#55f');
+				setAppStateG({tweetcol:'#55f'});
 				tweetPress=false;
 			}
 		},2000);
 	}
-    else if(socket && socket.connected){
+	else if(socket && socket.connected){
 		socket.emit('tweet');
 		tweetPress=false;
-		setTweetColG('#55f');
+		setAppStateG({tweetcol:'#55f'});
 	}
 }
 var recPress = false;
@@ -225,37 +169,37 @@ var recOn = false;
 const socketRec = () => {
 	if(recOn){
 		if(!recPress){
-			setRecColG('#f55');
+			setAppStateG({reccol:'#f55'});
 			recPress=true;
 			setTimeout(()=>{
 				if(recPress){
-					setRecColG('#070');
+					setAppStateG({reccol:'#070'});
 					recPress=false;
 				}
 			},2000);
 		}
-    	else if(socket && socket.connected){
+		else if(socket && socket.connected){
 			socket.emit('recstop',uniqueId);
 			recPress=false;
 			recOn=false;
-			setRecColG('#55f');
+			setAppStateG({reccol:'#55f'});
 		}
 	}else{
 		if(!recPress){
-			setRecColG('#ff5');
+			setAppStateG({reccol:'#ff5'});
 			recPress=true;
 			setTimeout(()=>{
 				if(recPress){
-					setRecColG('#55f');
+					setAppStateG({reccol:'#55f'});
 					recPress=false;
 				}
 			},2000);
 		}
-    	else if(socket && socket.connected){
+		else if(socket && socket.connected){
 			socket.emit('recstart',uniqueId);
 			recPress=false;
 			recOn=true;
-			setRecColG('#070');
+			setAppStateG({reccol:'#070'});
 		}
 	}
 }
@@ -263,37 +207,37 @@ var rtmp1On = false;
 const socketRtmp1 = () => {
 	if(rtmp1On){
 		if(!rtmp1Press){
-			setrtmp1ColG('#f55');
+			setAppStateG({rtmp1col:'#f55'});
 			rtmp1Press=true;
 			setTimeout(()=>{
 				if(rtmp1Press){
-					setrtmp1ColG('#070');
+					setAppStateG({rtmp1col:'#070'});
 					rtmp1Press=false;
 				}
 			},2000);
 		}
-    	else if(socket && socket.connected){
+	else if(socket && socket.connected){
 			socket.emit('rtmp1stop',uniqueId);
 			rtmp1Press=false;
 			rtmp1On=false;
-			setrtmp1ColG('#55f');
+			setAppStateG({rtmp1col:'#55f'});
 		}
 	}else{
 		if(!rtmp1Press){
-			setrtmp1ColG('#ff5');
+			setAppStateG({rtmp1col:'#ff5'});
 			rtmp1Press=true;
 			setTimeout(()=>{
 				if(rtmp1Press){
-					setrtmp1ColG('#55f');
+					setAppStateG({rtmp1col:'#55f'});
 					rtmp1Press=false;
 				}
 			},2000);
 		}
-    	else if(socket && socket.connected){
+	else if(socket && socket.connected){
 			socket.emit('rtmp1start',uniqueId);
 			rtmp1Press=false;
 			rtmp1On=true;
-			setrtmp1ColG('#070');
+			setAppStateG({rtmp1col:'#070'});
 		}
 	}
 }
@@ -301,37 +245,37 @@ var rtmp2On = false;
 const socketRtmp2 = () => {
 	if(rtmp2On){
 		if(!rtmp2Press){
-			setrtmp2ColG('#f55');
+			setAppStateG({rtmp2col:'#f55'});
 			rtmp2Press=true;
 			setTimeout(()=>{
 				if(rtmp2Press){
-					setrtmp2ColG('#070');
+					setAppStateG({rtmp2col:'#070'});
 					rtmp2Press=false;
 				}
 			},2000);
 		}
-    	else if(socket && socket.connected){
+		else if(socket && socket.connected){
 			socket.emit('rtmp2stop',uniqueId);
 			rtmp2Press=false;
 			rtmp2On=false;
-			setrtmp2ColG('#55f');
+			setAppStateG({rtmp2col:'#55f'});
 		}
 	}else{
 		if(!rtmp2Press){
-			setrtmp2ColG('#ff5');
+			setAppStateG({rtmp2col:'#ff5'});
 			rtmp2Press=true;
 			setTimeout(()=>{
 				if(rtmp2Press){
-					setrtmp2ColG('#55f');
+					setAppStateG({rtmp2col:'#55f'});
 					rtmp2Press=false;
 				}
 			},2000);
 		}
-    	else if(socket && socket.connected){
+		else if(socket && socket.connected){
 			socket.emit('rtmp2start',uniqueId);
 			rtmp2Press=false;
 			rtmp2On=true;
-			setrtmp2ColG('#070');
+			setAppStateG({rtmp2col:'#070'});
 		}
 	}
 }
@@ -339,181 +283,196 @@ var rtmp3On = false;
 const socketRtmp3 = () => {
 	if(rtmp3On){
 		if(!rtmp3Press){
-			setrtmp3ColG('#f55');
+			setAppStateG({rtmp3col:'#f55'});
 			rtmp3Press=true;
 			setTimeout(()=>{
 				if(rtmp3Press){
-					setrtmp3ColG('#070');
+					setAppStateG({rtmp3col:'#070'});
 					rtmp3Press=false;
 				}
 			},2000);
 		}
-    	else if(socket && socket.connected){
+		else if(socket && socket.connected){
 			socket.emit('rtmp3stop',uniqueId);
 			rtmp3Press=false;
 			rtmp3On=false;
-			setrtmp3ColG('#55f');
+			setAppStateG({rtmp3col:'#55f'});
 		}
 	}else{
 		if(!rtmp3Press){
-			setrtmp3ColG('#ff5');
+			setAppStateG({rtmp3col:'#ff5'});
 			rtmp3Press=true;
 			setTimeout(()=>{
 				if(rtmp3Press){
-					setrtmp3ColG('#55f');
+					setAppStateG({rtmp3col:'#55f'});
 					rtmp3Press=false;
 				}
 			},2000);
 		}
-    	else if(socket && socket.connected){
+		else if(socket && socket.connected){
 			socket.emit('rtmp3start',uniqueId);
 			rtmp3Press=false;
 			rtmp3On=true;
-			setrtmp3ColG('#070');
+			setAppStateG({rtmp3col:'#070'});
 		}
 	}
 }
 var sceneMode=1;
 const socketScene1 = () => {
 	if(sceneMode!=1){
-    	if(socket && socket.connected){
+		if(socket && socket.connected){
 			socket.emit('scene1',uniqueId);
 			sceneMode=1;
-			setScene1ColG('#070');
-			setScene2ColG('#55f');
-			setSceneMixColG('#55f');
-			setSceneMix1ColG('#55f');
-			setSceneMix2ColG('#55f');
-			setSceneMixNoneColG('#55f');
+			var newAppState = {};
+			newAppState.scene1col='#070';
+			newAppState.scene2col='#55f';
+			newAppState.sceneMixcol='#55f';
+			newAppState.sceneMix1col='#55f';
+			newAppState.sceneMix2col='#55f';
+			newAppState.sceneMixNonecol='#55f';
+			setAppStateG(newAppState);
 		}
 	}
 }
 const socketScene2 = () => {
 	if(sceneMode!=2){
-    	if(socket && socket.connected){
+		if(socket && socket.connected){
 			socket.emit('scene2',uniqueId);
 			sceneMode=2;
-			setScene1ColG('#55f');
-			setScene2ColG('#070');
-			setSceneMixColG('#55f');
-			setSceneMix1ColG('#55f');
-			setSceneMix2ColG('#55f');
-			setSceneMixNoneColG('#55f');
+			var newAppState = {};
+			newAppState.scene1col='#55f';
+			newAppState.scene2col='#070';
+			newAppState.sceneMixcol='#55f';
+			newAppState.sceneMix1col='#55f';
+			newAppState.sceneMix2col='#55f';
+			newAppState.sceneMixNonecol='#55f';
+			setAppStateG(newAppState);
+
 		}
 	}
 }
 const socketSceneMix = () => {
 	if(sceneMode!=3){
-    	if(socket && socket.connected){
+		if(socket && socket.connected){
 			socket.emit('sceneMix',uniqueId);
 			sceneMode=3;
-			setScene1ColG('#55f');
-			setScene2ColG('#55f');
-			setSceneMixColG('#070');
-			setSceneMix1ColG('#55f');
-			setSceneMix2ColG('#55f');
-			setSceneMixNoneColG('#55f');
+			var newAppState = {};
+			newAppState.scene1col='#55f';
+			newAppState.scene2col='#55f';
+			newAppState.sceneMixcol='#070';
+			newAppState.sceneMix1col='#55f';
+			newAppState.sceneMix2col='#55f';
+			newAppState.sceneMixNonecol='#55f';
+			setAppStateG(newAppState);
 		}
 	}
 }
 const socketSceneMix1 = () => {
 	if(sceneMode!=31){
-    	if(socket && socket.connected){
+		if(socket && socket.connected){
 			socket.emit('sceneMix1',uniqueId);
 			sceneMode=31;
-			setScene1ColG('#55f');
-			setScene2ColG('#55f');
-			setSceneMixColG('#55f');
-			setSceneMix1ColG('#070');
-			setSceneMix2ColG('#55f');
-			setSceneMixNoneColG('#55f');
+			var newAppState = {};
+			newAppState.scene1col='#55f';
+			newAppState.scene2col='#55f';
+			newAppState.sceneMixcol='#55f';
+			newAppState.sceneMix1col='#070';
+			newAppState.sceneMix2col='#55f';
+			newAppState.sceneMixNonecol='#55f';
+			setAppStateG(newAppState);
 		}
 	}
 }
 const socketSceneMix2 = () => {
 	if(sceneMode!=32){
-    	if(socket && socket.connected){
+		if(socket && socket.connected){
 			socket.emit('sceneMix2',uniqueId);
 			sceneMode=32;
-			setScene1ColG('#55f');
-			setScene2ColG('#55f');
-			setSceneMixColG('#55f');
-			setSceneMix1ColG('#55f');
-			setSceneMix2ColG('#070');
-			setSceneMixNoneColG('#55f');
+			var newAppState = {};
+			newAppState.scene1col='#55f';
+			newAppState.scene2col='#55f';
+			newAppState.sceneMixcol='#55f';
+			newAppState.sceneMix1col='#55f';
+			newAppState.sceneMix2col='#070';
+			newAppState.sceneMixNonecol='#55f';
+			setAppStateG(newAppState);
 		}
 	}
 }
 const socketSceneMixNone = () => {
 	if(sceneMode!=4){
-    	if(socket && socket.connected){
+		if(socket && socket.connected){
 			socket.emit('sceneMixNone',uniqueId);
 			sceneMode=4;
-			setScene1ColG('#55f');
-			setScene2ColG('#55f');
-			setSceneMixColG('#55f');
-			setSceneMix1ColG('#55f');
-			setSceneMix2ColG('#55f');
-			setSceneMixNoneColG('#070');
+			var newAppState = {};
+			newAppState.scene1col='#55f';
+			newAppState.scene2col='#55f';
+			newAppState.sceneMixcol='#55f';
+			newAppState.sceneMix1col='#55f';
+			newAppState.sceneMix2col='#55f';
+			newAppState.sceneMixNonecol='#070';
+			setAppStateG(newAppState);
 		}
 	}
 }
 var introOn = false;
 const socketIntro = () => {
 	if(!introOn){
-    	if(socket && socket.connected){
+		if(socket && socket.connected){
 			socket.emit('modeIntro',uniqueId);
 			introOn=true;
 			extroOn=false;
-			setIntroColG('#070');
-			setExtroColG('#55f');
+			setAppStateG({introcol:'#070'});
+			setAppStateG({extrocol:'#55f'});
 		}
 	}else{
-    	if(socket && socket.connected){
+		if(socket && socket.connected){
 			socket.emit('modeNormal',uniqueId);
 			introOn=false;
 			extroOn=false;
-			setIntroColG('#55f');
-			setExtroColG('#55f');
+			setAppStateG({introcol:'#55f'});
+			setAppStateG({extrocol:'#55f'});
 		}
 	}
 }
 var extroOn = false;
 const socketExtro = () => {
 	if(!extroOn){
-    	if(socket && socket.connected){
+		if(socket && socket.connected){
 			socket.emit('modeExtro',uniqueId);
 			introOn=false;
 			extroOn=true;
-			setIntroColG('#55f');
-			setExtroColG('#070');
+			setAppStateG({introcol:'#55f'});
+			setAppStateG({extrocol:'#070'});
 		}
 	}else{
-    	if(socket && socket.connected){
+		if(socket && socket.connected){
 			socket.emit('modeNormal',uniqueId);
 			introOn=false;
 			extroOn=false;
-			setIntroColG('#55f');
-			setExtroColG('#55f');
+			setAppStateG({introcol:'#55f'});
+			setAppStateG({extrocol:'#55f'});
 		}
 	}
 }
 const socketShot = () => {
-    if(socket && socket.connected){
+	if(socket && socket.connected){
 		socket.emit('getShot',uniqueId);
 		socket.emit('getState',uniqueId);
+		console.log('getState');
 	}
-	setImgUriG('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYwAAADYCAIAAAB3M0NIAAABhGlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV9TxSItInYQcchQnayIijhKFYtgobQVWnUwufQLmjQkKS6OgmvBwY/FqoOLs64OroIg+AHi6OSk6CIl/i8ptIjx4Lgf7+497t4BQqPCVLNrAlA1y0jFY2I2tyr2vEJAAP0YR0hipp5IL2bgOb7u4ePrXZRneZ/7c4SUvMkAn0g8x3TDIt4gntm0dM77xGFWkhTic+Ixgy5I/Mh12eU3zkWHBZ4ZNjKpeeIwsVjsYLmDWclQiaeJI4qqUb6QdVnhvMVZrdRY6578hcG8tpLmOs1hxLGEBJIQIaOGMiqwEKVVI8VEivZjHv4hx58kl0yuMhg5FlCFCsnxg//B727NwtSkmxSMAd0vtv0xAvTsAs26bX8f23bzBPA/A1da219tALOfpNfbWuQI6NsGLq7bmrwHXO4Ag0+6ZEiO5KcpFArA+xl9Uw4YuAV619zeWvs4fQAy1NXyDXBwCIwWKXvd492Bzt7+PdPq7wdmHHKiSMerMAAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAAd0SU1FB+YCCBEvCyuXARIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAABEElEQVR42u3BMQEAAADCoPVPbQsvoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgLcB62UAATGAzeEAAAAASUVORK5CYII=');
+	setAppStateG({imguri:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYwAAADYCAIAAAB3M0NIAAABhGlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV9TxSItInYQcchQnayIijhKFYtgobQVWnUwufQLmjQkKS6OgmvBwY/FqoOLs64OroIg+AHi6OSk6CIl/i8ptIjx4Lgf7+497t4BQqPCVLNrAlA1y0jFY2I2tyr2vEJAAP0YR0hipp5IL2bgOb7u4ePrXZRneZ/7c4SUvMkAn0g8x3TDIt4gntm0dM77xGFWkhTic+Ixgy5I/Mh12eU3zkWHBZ4ZNjKpeeIwsVjsYLmDWclQiaeJI4qqUb6QdVnhvMVZrdRY6578hcG8tpLmOs1hxLGEBJIQIaOGMiqwEKVVI8VEivZjHv4hx58kl0yuMhg5FlCFCsnxg//B727NwtSkmxSMAd0vtv0xAvTsAs26bX8f23bzBPA/A1da219tALOfpNfbWuQI6NsGLq7bmrwHXO4Ag0+6ZEiO5KcpFArA+xl9Uw4YuAV619zeWvs4fQAy1NXyDXBwCIwWKXvd492Bzt7+PdPq7wdmHHKiSMerMAAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAAd0SU1FB+YCCBEvCyuXARIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAABEElEQVR42u3BMQEAAADCoPVPbQsvoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgLcB62UAATGAzeEAAAAASUVORK5CYII='});
 }
 const socketAudioLevel = () => {
-    if(socket && socket.connected){
+	if(socket && socket.connected){
 		socket.emit('getAudioLevel',uniqueId);
 	}
-	setImg2UriG('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYwAAADYCAIAAAB3M0NIAAABhGlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV9TxSItInYQcchQnayIijhKFYtgobQVWnUwufQLmjQkKS6OgmvBwY/FqoOLs64OroIg+AHi6OSk6CIl/i8ptIjx4Lgf7+497t4BQqPCVLNrAlA1y0jFY2I2tyr2vEJAAP0YR0hipp5IL2bgOb7u4ePrXZRneZ/7c4SUvMkAn0g8x3TDIt4gntm0dM77xGFWkhTic+Ixgy5I/Mh12eU3zkWHBZ4ZNjKpeeIwsVjsYLmDWclQiaeJI4qqUb6QdVnhvMVZrdRY6578hcG8tpLmOs1hxLGEBJIQIaOGMiqwEKVVI8VEivZjHv4hx58kl0yuMhg5FlCFCsnxg//B727NwtSkmxSMAd0vtv0xAvTsAs26bX8f23bzBPA/A1da219tALOfpNfbWuQI6NsGLq7bmrwHXO4Ag0+6ZEiO5KcpFArA+xl9Uw4YuAV619zeWvs4fQAy1NXyDXBwCIwWKXvd492Bzt7+PdPq7wdmHHKiSMerMAAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAAd0SU1FB+YCCBEvCyuXARIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAABEElEQVR42u3BMQEAAADCoPVPbQsvoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgLcB62UAATGAzeEAAAAASUVORK5CYII=');
+	setAppStateG({img2uri:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYwAAADYCAIAAAB3M0NIAAABhGlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV9TxSItInYQcchQnayIijhKFYtgobQVWnUwufQLmjQkKS6OgmvBwY/FqoOLs64OroIg+AHi6OSk6CIl/i8ptIjx4Lgf7+497t4BQqPCVLNrAlA1y0jFY2I2tyr2vEJAAP0YR0hipp5IL2bgOb7u4ePrXZRneZ/7c4SUvMkAn0g8x3TDIt4gntm0dM77xGFWkhTic+Ixgy5I/Mh12eU3zkWHBZ4ZNjKpeeIwsVjsYLmDWclQiaeJI4qqUb6QdVnhvMVZrdRY6578hcG8tpLmOs1hxLGEBJIQIaOGMiqwEKVVI8VEivZjHv4hx58kl0yuMhg5FlCFCsnxg//B727NwtSkmxSMAd0vtv0xAvTsAs26bX8f23bzBPA/A1da219tALOfpNfbWuQI6NsGLq7bmrwHXO4Ag0+6ZEiO5KcpFArA+xl9Uw4YuAV619zeWvs4fQAy1NXyDXBwCIwWKXvd492Bzt7+PdPq7wdmHHKiSMerMAAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAAd0SU1FB+YCCBEvCyuXARIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAABEElEQVR42u3BMQEAAADCoPVPbQsvoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgLcB62UAATGAzeEAAAAASUVORK5CYII='});
 }
 var currentBy;
 var currentText;
 const confirmText = () => {
+	setAppStateG({infoText:''});
 	if(currentBy && currentText && socket && socket.connected){
 		if(currentBy) socket.emit('respond','confirmed: '+currentText,currentBy);
 	}
@@ -522,6 +481,7 @@ const confirmText = () => {
 
 var socket_initialized = false;
 function connectSocket() {
+	console.log('connectSocket');
 	if(socket_initialized) {
 		if(socket.io.uri != "wss://"+storage_data.ws+":3334"){
 			console.log('reconn '+storage_data.ws);
@@ -530,6 +490,7 @@ function connectSocket() {
 			socket=null;
 			connectSocket();
 		}else{
+			console.log('is initialized'+storage_data.ws);
 			if(socket && socket.connected)
 				if(gLoggedin){
 					gLoggedin=false;
@@ -542,14 +503,13 @@ function connectSocket() {
 
 if (!isWebUri("https://"+storage_data.ws+":3334")) {
 	console.log("Not a valid url.");
-    return;
+	return;
 }
 
 try{
 socket = io("wss://"+storage_data.ws+":3334", { transports: ["websocket"] });
 console.log('connecting');
 socket.on('connect_error', (error) => {
-	//setLoggedInG(false);
 	if(setStatusTextG){
 		setStatusTextG(error.toString());
 	}
@@ -562,9 +522,9 @@ socket.on('connect', () => {
 		setLoggedInG(true);
 	}
 	socket.emit('getState',uniqueId);
+	console.log('getState');
 });
 socket.on('disconnect', () => {
-	//setLoggedInG(false);
 	console.log('disconneced');
 });
 socket.on('error', (error) => {
@@ -573,18 +533,21 @@ socket.on('error', (error) => {
 socket.on('reconnect', (a) => {
 	console.log('reconnect '+a);
 });
+socket.on("connect_error", (error) => {
+	console.log('conn error '+error);
+});
 socket.on('shot', (data,id) => {
 	if(id == null || uniqueId == id) {
-		setImgUriG(data);
+		setAppStateG({'imgUri':data});
 	}
 });
 socket.on('audioLevel', (data,id) => {
 	if(id == null || uniqueId == id) {
-		setImg2UriG(data);
+		setAppStateG({'img2Uri':data});
 	}
 });
 socket.on('infoText', (data,by) => {
-	setInfoTextG(data);
+	setAppStateG({'infoText':data});
 	currentBy = by;
 	currentText = data;
 	if(socket && socket.connected){
@@ -592,13 +555,13 @@ socket.on('infoText', (data,by) => {
 	}
 });
 socket.on('ytCount', (data) => {
-	setRtmp2TextG(data);
+	setAppStateG({'rtmp2text':data});
 });
 socket.on('audio_1', (data) => {
-	setSrt1TextG(data);
+	setAppStateG({'srt1text':data});
 });
 socket.on('audio_2', (data) => {
-	setSrt2TextG(data);
+	setAppStateG({'srt2text':data});
 });
 socket.on('state', (state,reply,id) => {
 	console.log(reply);
@@ -607,169 +570,174 @@ socket.on('state', (state,reply,id) => {
 	if(reply){
 		if(uniqueId != id) {
 			console.log('reply not for me',uniqueId,id);
-			return;
+		//	return;
 		}
 	}else{
 		if(uniqueId == id) {
 			console.log('state from self');
-			return;
+		//	return;
 		}
 	}
-	if(!setScene1ColG){
-		setTimeout(()=>{if(socket && socket.connected) {socket.emit('getState',uniqueId);};},2000);
-	}
+	//if(!setScene1ColG){
+	//	setTimeout(()=>{if(socket && socket.connected) {socket.emit('getState',uniqueId);};},2000);
+	//}
+	
+	var newAppState = {};
 	if(state.sceneMode == 1){
 		sceneMode=1;
-		setScene1ColG('#070');
-		setScene2ColG('#55f');
-		setSceneMixColG('#55f');
-		setSceneMix1ColG('#55f');
-		setSceneMix2ColG('#55f');
-		setSceneMixNoneColG('#55f');
+		newAppState.scene1col='#070';
+		newAppState.scene2col='#55f';
+		newAppState.sceneMixcol='#55f';
+		newAppState.sceneMix1col='#55f';
+		newAppState.sceneMix2col='#55f';
+		newAppState.sceneMixNonecol='#55f';
 	}
 	else if(state.sceneMode == 2){
 		sceneMode=2;
-		setScene1ColG('#55f');
-		setScene2ColG('#070');
-		setSceneMixColG('#55f');
-		setSceneMix1ColG('#55f');
-		setSceneMix2ColG('#55f');
-		setSceneMixNoneColG('#55f');
+		newAppState.scene1col='#55f';
+		newAppState.scene2col='#070';
+		newAppState.sceneMixcol='#55f';
+		newAppState.sceneMix1col='#55f';
+		newAppState.sceneMix2col='#55f';
+		newAppState.sceneMixNonecol='#55f';
 	}
 	else if(state.sceneMode == 3){
 		sceneMode=3;
-		setScene1ColG('#55f');
-		setScene2ColG('#55f');
-		setSceneMixColG('#070');
-		setSceneMix1ColG('#55f');
-		setSceneMix2ColG('#55f');
-		setSceneMixNoneColG('#55f');
+		newAppState.scene1col='#55f';
+		newAppState.scene2col='#55f';
+		newAppState.sceneMixcol='#070';
+		newAppState.sceneMix1col='#55f';
+		newAppState.sceneMix2col='#55f';
+		newAppState.sceneMixNonecol='#55f';
 	}
 	else if(state.sceneMode == 31){
 		sceneMode=3;
-		setScene1ColG('#55f');
-		setScene2ColG('#55f');
-		setSceneMixColG('#55f');
-		setSceneMix1ColG('#070');
-		setSceneMix2ColG('#55f');
-		setSceneMixNoneColG('#55f');
+		newAppState.scene1col='#55f';
+		newAppState.scene2col='#55f';
+		newAppState.sceneMixcol='#55f';
+		newAppState.sceneMix1col='#070';
+		newAppState.sceneMix2col='#55f';
+		newAppState.sceneMixNonecol='#55f';
 	}
 	else if(state.sceneMode == 32){
 		sceneMode=3;
-		setScene1ColG('#55f');
-		setScene2ColG('#55f');
-		setSceneMixColG('#55f');
-		setSceneMix1ColG('#55f');
-		setSceneMix2ColG('#070');
-		setSceneMixNoneColG('#55f');
+		newAppState.scene1col='#55f';
+		newAppState.scene2col='#55f';
+		newAppState.sceneMixcol='#55f';
+		newAppState.sceneMix1col='#55f';
+		newAppState.sceneMix2col='#070';
+		newAppState.sceneMixNonecol='#55f';
 	}
 	else if(state.sceneMode == 4){
 		sceneMode=4;
-		setScene1ColG('#55f');
-		setScene2ColG('#55f');
-		setSceneMixColG('#55f');
-		setSceneMix1ColG('#55f');
-		setSceneMix2ColG('#55f');
-		setSceneMixNoneColG('#070');
+		newAppState.scene1col='#55f';
+		newAppState.scene2col='#55f';
+		newAppState.sceneMixcol='#55f';
+		newAppState.sceneMix1col='#55f';
+		newAppState.sceneMix2col='#55f';
+		newAppState.sceneMixNonecol='#070';
 	}
 
 	if(state.mode == 'intro'){
 		introOn=true;
 		extroOn=false;
-		setIntroColG('#070');
-		setExtroColG('#55f');
+		newAppState.introcol='#070';
+		newAppState.extrocol='#55f';
 	}
 	else if(state.mode == 'extro'){
 		introOn=false;
 		extroOn=true;
-		setIntroColG('#55f');
-		setExtroColG('#070');
+		newAppState.introcol='#55f';
+		newAppState.extrocol='#070';
 	}
 	else if(state.mode == 'normal'){
 		introOn=false;
 		extroOn=false;
-		setIntroColG('#55f');
-		setExtroColG('#55f');
+		newAppState.introcol='#55f';
+		newAppState.extrocol='#55f';
 	}
 
 	if(state.map){
 		mapOn=true;
-		setMapColG('#070');
+		newAppState.mapcol='#070';
 	}else{
 		mapOn=false;
-		setMapColG('#55f');
+		newAppState.mapcol='#55f';
 	}
 	if(state.map2){
 		map2On=true;
-		setMap2ColG('#070');
+		newAppState.map2col='#070';
 	}else{
 		map2On=false;
-		setMap2ColG('#55f');
+		newAppState.map2col='#55f';
 	}
 
 	if(state.rec){
 		recOn=true;
-		setRecColG('#070');
+		newAppState.reccol='#070';
 	}else{
 		recOn=false;
-		setRecColG('#55f');
+		newAppState.reccol='#55f';
 	}
 
 	if(state.rtmp1){
 		rtmp1On=true;
-		setrtmp1ColG('#070');
+		newAppState.rtmp1col='#070';
 	}else{
 		rtmp1On=false;
-		setrtmp1ColG('#55f');
+		newAppState.rtmp1col='#55f';
 	}
 
 	if(state.rtmp2){
 		rtmp2On=true;
-		setrtmp2ColG('#070');
+		newAppState.rtmp2col='#070';
 	}else{
 		rtmp2On=false;
-		setrtmp2ColG('#55f');
+		newAppState.rtmp2col='#55f';
 	}
 
 	if(state.rtmp3){
 		rtmp3On=true;
-		setrtmp3ColG('#070');
+		newAppState.rtmp3col='#070';
 	}else{
 		rtmp3On=false;
-		setrtmp3ColG('#55f');
+		newAppState.rtmp3col='#55f';
 	}
 
 	if(state.srt1){
 		srt1on = true;
-		setSrt1ColG('#070');
+		newAppState.srt1col='#070';
 	}else{
 		srt1on = false;
-		setSrt1ColG('#55f');
+		newAppState.srt1col='#55f';
+		newAppState.srt1text='SRT1';
 	}
 
 	if(state.srt2){
 		srt2on = true;
-		setSrt2ColG('#070');
+		newAppState.srt2col='#070';
 	}else{
 		srt2on = false;
-		setSrt2ColG('#55f');
+		newAppState.srt2col='#55f';
+		newAppState.srt2text='SRT2';
 	}
 
 	if(state.srt1mute){
 		srt1mute = true;
-		setSrt1muteColG('#f55');
+		newAppState.srt1mutetext=' M';
 	}else{
 		srt1mute = false;
-		setSrt1muteColG('');
+		newAppState.srt1mutetext='';
 	}
 
 	if(state.srt2mute){
 		srt2mute = true;
-		setSrt2muteColG('#f55');
+		newAppState.srt2mutetext=' M';
 	}else{
 		srt2mute = false;
-		setSrt2muteColG('');
+		newAppState.srt2mutetext='';
 	}
+	setAppStateG(newAppState);
 	console.log(JSON.stringify(state));
 	} catch (e){
 		console.log(e);
@@ -786,7 +754,7 @@ var watchId = null;
 var gLoggedin = false;
 
 const setUrl = function(url) {
-    AsyncStorage.setItem('obsctrl_data',JSON.stringify({ws:url}));
+	AsyncStorage.setItem('obsctrl_data',JSON.stringify({ws:url}));
 	storage_data = {ws:url};
 	console.log(url);
 	gLoggedin=true;
@@ -795,406 +763,405 @@ const setUrl = function(url) {
 
 const requestLocationPermission = async () => {
 
-  console.log(watchId);
-  if(gps_active) {
-  	if(watchId != null){
-		Geolocation.clearWatch(watchId);
-		Geolocation.stopObserving();
-		watchId=null;
-	  	gps_active=false;
-      	setT('stopped');
-		gpsButtonC = '#44f';
-	}else{
-		console.log('no watchid');
+	console.log(watchId);
+	if(gps_active) {
+		if(watchId != null){
+			Geolocation.clearWatch(watchId);
+			Geolocation.stopObserving();
+			watchId=null;
+			gps_active=false;
+			setAppStateG({'gpsText':'Stopped'});
+		}else{
+			console.log('no watchid');
+		}
+		return;
 	}
-  	return;
-  }
-  console.log("ask");
-  try {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      {
-        title: "Location Permission",
-        message: "Grant?",
-        buttonNeutral: "Ask Me Later",
-        buttonNegative: "Cancel",
-        buttonPositive: "OK"
-      }
-    );
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log("You can use the GPS");
-	  gps_active=true;
-      setT('gps_ok');
-	  
-	 // setInterval(() => {
-	  setGpsButtonColor('#000');
-	  watchId = Geolocation.watchPosition(
-        position => {
-	  	  setT('got loc');
-          const initialPosition = JSON.stringify(position);
-          console.log('GPS:'+JSON.stringify(initialPosition));
-		  if(socket && socket.connected){
-		  	socket.emit('tpv2',{lat:position.coords.latitude,lon:position.coords.longitude,speed:position.coords.speed});
-			socket_counter++;
-	  		setT(socket_counter);
-			setGpsButtonColor('#070');
-		  }else{
-			setGpsButtonColor('#f00');
-	  	  	setT('no soc');
-		  }
+	console.log("ask");
+	try {
+		const granted = await PermissionsAndroid.request(
+			PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+			{
+				title: "Location Permission",
+				message: "Grant?",
+				buttonNeutral: "Ask Me Later",
+				buttonNegative: "Cancel",
+				buttonPositive: "OK"
+			}
+		);
+		if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+			console.log("You can use the GPS");
+			gps_active=true;
+			setAppStateG({'gpsText':'GPS OK'});
+			watchId = Geolocation.watchPosition(
+				position => {
+					setT('got loc');
+					const initialPosition = JSON.stringify(position);
+					console.log('GPS:'+JSON.stringify(initialPosition));
+					if(socket && socket.connected){
+						socket.emit('tpv2',{lat:position.coords.latitude,lon:position.coords.longitude,speed:position.coords.speed});
+						socket_counter++;
+						setAppStateG({'gpsText':socket_counter});
+					}else{
+						setAppStateG({'gpsText':'NO CONN'});
+					}
 
-        },
-        error => {
-			console.log(JSON.stringify(error));
-			setGpsButtonColor('#f00');
-	  		setT(JSON.stringify(error));
-		},
-        {enableHighAccuracy: true, distanceFilter:5});
-	   console.log(watchId);
-    } else {
-      console.log("GPS permission denied");
-	  setT('denied');
-    }
-  } catch (err) {
-    console.warn(err);
-  }
+				},
+				error => {
+					console.log(JSON.stringify(error));
+					setAppStateG({'gpsText':JSON.stringify(error)});
+				},
+				{enableHighAccuracy: true, distanceFilter:5}
+			);
+			console.log(watchId);
+		} else {
+			console.log("GPS permission denied");
+			setAppStateG({'gpsText':'Denied'});
+		}	
+	} catch (err) {
+		console.warn(err);
+	}
 };
-
 
 var storage_data = null;
 
 async function getStorageData(){
-  try {
-    const value = await AsyncStorage.getItem('obsctrl_data');
-    if(value) {
-      storage_data = JSON.parse(value);
-	  if(storage_data.ws){
-		if(setUrlG){
-			setUrlG(storage_data.ws);
-		};
-	    if(!socket || !socket.connected){
-		  connectSocket();
-		  gLoggedin=true;
-	    }
-      }
-    }
-  } catch(e) {
-  }
+	try {
+		const value = await AsyncStorage.getItem('obsctrl_data');
+		if(value) {
+			storage_data = JSON.parse(value);
+			if(setUrlStateG)setUrlStateG(storage_data.ws);
+			if(storage_data.ws){
+				if(!socket || !socket.connected){
+					connectSocket();
+					gLoggedin=true;
+				}
+			}
+		}
+	} catch(e) {
+	}
 }
 
 getStorageData();
 
-const Settings = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-  const backgroundStyle = {
-  	userSelect: 'none'
-//    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-  var url = '';
-  if(storage_data && storage_data.ws){
-  	url = storage_data.ws;
-  }
-  const [text, setText] = useState(url);
-  setUrlG=setText;
-  const [statusText, setStatusText] = useState('');
-  setStatusTextG=setStatusText;
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView contentInsetAdjustmentBehavior="automatic" style={{margin:1}}>
-          <View style={{flexDirection: "row",flex:1}}>
-		    <View style={{ flex: 1,padding:12 }}>
-		        <Text style={styles.text}>ObsCtrl Backend Hostname:</Text>
-		    </View>
-          </View>
-        <View>
-          <TextInput
-            style={{...styles.input,backgroundColor:'#fff',color:'#000'}}
-			onChangeText={newText => setText(newText)}
-            defaultValue={text}
-          />
-	    </View>
-          <View style={{flexDirection: "row",flex:1}}>
-		    <View style={{ flex: 1,padding:12 }}>
-	          <Button title="OK" onPress={()=>{if (!isWebUri("https://"+text+":3334")) {setStatusText("Not a valid host: \""+text+"\"") }else{setStatusText("");setUrl(text)}}}>
-		      </Button>
-		    </View>
-          </View>
-          <View style={{flexDirection: "row",flex:1}}>
-		    <View style={{ flex: 1,padding:12 }}>
-		        <Text style={{...styles.text,color:'#f00'}}>{statusText}</Text>
-		    </View>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-	);
-};
-
-const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-  const backgroundStyle = {
-  	userSelect: 'none'
-//    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  const [gpsButtonColor,setGpsButtonColor2] = useState("gpsstate");
-  
-
-  
-  const [gpsText, setText] = useState('init');
-  registerT(setText);
-  
-  const [mapcol, setMapCol] = useState('#55f');
-  setMapColG=function(c){setMapCol(c)};
-  const [map2col, setMap2Col] = useState('#55f');
-  setMap2ColG=function(c){setMap2Col(c)};
-  const [reccol, setRecCol] = useState('#55f');
-  setRecColG=function(c){setRecCol(c)};
-  const [clearcol, setClearCol] = useState('#55f');
-  setClearColG=function(c){setClearCol(c)};
-  const [clear2col, setClear2Col] = useState('#55f');
-  setClear2ColG=function(c){setClear2Col(c)};
-  const [rtmp1col, setRtmp1Col] = useState('#55f');
-  setrtmp1ColG=function(c){setRtmp1Col(c)};
-  const [rtmp2col, setRtmp2Col] = useState('#55f');
-  setrtmp2ColG=function(c){setRtmp2Col(c)};
-  const [rtmp3col, setRtmp3Col] = useState('#55f');
-  setrtmp3ColG=function(c){setRtmp3Col(c)};
-  const [scene1col, setScene1Col] = useState('#070');
-  setScene1ColG=function(c){setScene1Col(c)};
-  const [scene2col, setScene2Col] = useState('#55f');
-  setScene2ColG=function(c){setScene2Col(c)};
-  const [sceneMixcol, setSceneMixCol] = useState('#55f');
-  setSceneMixColG=function(c){setSceneMixCol(c)};
-  const [sceneMix1col, setSceneMix1Col] = useState('#55f');
-  setSceneMix1ColG=function(c){setSceneMix1Col(c)};
-  const [sceneMixNonecol, setSceneMixNoneCol] = useState('#55f');
-  setSceneMixNoneColG=function(c){setSceneMixNoneCol(c)};
-  const [sceneMix2col, setSceneMix2Col] = useState('#55f');
-  setSceneMix2ColG=function(c){setSceneMix2Col(c)};
-  const [introcol, setIntroCol] = useState('#55f');
-  setIntroColG=function(c){setIntroCol(c)};
-  const [extrocol, setExtroCol] = useState('#55f');
-  setExtroColG=function(c){setExtroCol(c)};
-  const [srt1col, setSrt1Col] = useState('#55f');
-  setSrt1ColG=function(c){setSrt1Col(c)};
-  const [srt2col, setSrt2Col] = useState('#55f');
-  setSrt2ColG=function(c){setSrt2Col(c)};
-  const [srt1mutecol, setSrt1muteCol] = useState('');
-  setSrt1muteColG=function(c){setSrt1muteCol(c)};
-  const [srt2mutecol, setSrt2muteCol] = useState('');
-  setSrt2muteColG=function(c){setSrt2muteCol(c)};
-  const [tweetcol, setTweetCol] = useState('#55f');
-  setTweetColG=function(c){setTweetCol(c)};
-  const [infoText, setInfoText] = useState('');
-  setInfoTextG=function(c){setInfoText(c)};
-  const [rtmp2Text, setRtmp2Text] = useState('RTMP2');
-  setRtmp2TextG=function(c){setRtmp2Text(c)};
-  const [srt1Text, setSrt1Text] = useState('SRT1');
-  setSrt1TextG=function(c){setSrt1Text(c)};
-  const [srt2Text, setSrt2Text] = useState('SRT2');
-  setSrt2TextG=function(c){setSrt2Text(c)};
+var appState = {
+	infoText: '',
+	gpsText: 'Init',
+	srt1col: '#55f',
+	srt2col: '#55f',
+	mapcol: '#55f',
+	clearcol: '#55f',
+	map2col: '#55f',
+	clear2col: '#55f',
+	introcol: '#55f',
+	extrocol: '#55f',
+	tweetcol: '#55f',
+	rtmp1col: '#55f',
+	rtmp2col: '#55f',
+	rtmp3col: '#55f',
+	reccol: '#55f',
+	scene1col: '#55f',
+	scene2col: '#55f',
+	sceneMixcol: '#55f',
+	sceneMix1col: '#55f',
+	sceneMix2col: '#55f',
+	sceneMixNonecol: '#55f',
+	srt1mutetext: '',
+	srt2mutetext: '',
+	srt1text: 'SRT1',
+	srt2text: 'SRT2',
+	rtmp2text: 'RTMP2',
+	imgUri: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYwAAADYCAIAAAB3M0NIAAABhGlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV9TxSItInYQcchQnayIijhKFYtgobQVWnUwufQLmjQkKS6OgmvBwY/FqoOLs64OroIg+AHi6OSk6CIl/i8ptIjx4Lgf7+497t4BQqPCVLNrAlA1y0jFY2I2tyr2vEJAAP0YR0hipp5IL2bgOb7u4ePrXZRneZ/7c4SUvMkAn0g8x3TDIt4gntm0dM77xGFWkhTic+Ixgy5I/Mh12eU3zkWHBZ4ZNjKpeeIwsVjsYLmDWclQiaeJI4qqUb6QdVnhvMVZrdRY6578hcG8tpLmOs1hxLGEBJIQIaOGMiqwEKVVI8VEivZjHv4hx58kl0yuMhg5FlCFCsnxg//B727NwtSkmxSMAd0vtv0xAvTsAs26bX8f23bzBPA/A1da219tALOfpNfbWuQI6NsGLq7bmrwHXO4Ag0+6ZEiO5KcpFArA+xl9Uw4YuAV619zeWvs4fQAy1NXyDXBwCIwWKXvd492Bzt7+PdPq7wdmHHKiSMerMAAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAAd0SU1FB+YCCBEvCyuXARIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAABEElEQVR42u3BMQEAAADCoPVPbQsvoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgLcB62UAATGAzeEAAAAASUVORK5CYII=',
+	img2Uri: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYwAAADYCAIAAAB3M0NIAAABhGlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV9TxSItInYQcchQnayIijhKFYtgobQVWnUwufQLmjQkKS6OgmvBwY/FqoOLs64OroIg+AHi6OSk6CIl/i8ptIjx4Lgf7+497t4BQqPCVLNrAlA1y0jFY2I2tyr2vEJAAP0YR0hipp5IL2bgOb7u4ePrXZRneZ/7c4SUvMkAn0g8x3TDIt4gntm0dM77xGFWkhTic+Ixgy5I/Mh12eU3zkWHBZ4ZNjKpeeIwsVjsYLmDWclQiaeJI4qqUb6QdVnhvMVZrdRY6578hcG8tpLmOs1hxLGEBJIQIaOGMiqwEKVVI8VEivZjHv4hx58kl0yuMhg5FlCFCsnxg//B727NwtSkmxSMAd0vtv0xAvTsAs26bX8f23bzBPA/A1da219tALOfpNfbWuQI6NsGLq7bmrwHXO4Ag0+6ZEiO5KcpFArA+xl9Uw4YuAV619zeWvs4fQAy1NXyDXBwCIwWKXvd492Bzt7+PdPq7wdmHHKiSMerMAAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAAd0SU1FB+YCCBEvCyuXARIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAABEElEQVR42u3BMQEAAADCoPVPbQsvoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgLcB62UAATGAzeEAAAAASUVORK5CYII='
+}
 	
-  const [imgUri, setImgUri] = useState('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYwAAADYCAIAAAB3M0NIAAABhGlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV9TxSItInYQcchQnayIijhKFYtgobQVWnUwufQLmjQkKS6OgmvBwY/FqoOLs64OroIg+AHi6OSk6CIl/i8ptIjx4Lgf7+497t4BQqPCVLNrAlA1y0jFY2I2tyr2vEJAAP0YR0hipp5IL2bgOb7u4ePrXZRneZ/7c4SUvMkAn0g8x3TDIt4gntm0dM77xGFWkhTic+Ixgy5I/Mh12eU3zkWHBZ4ZNjKpeeIwsVjsYLmDWclQiaeJI4qqUb6QdVnhvMVZrdRY6578hcG8tpLmOs1hxLGEBJIQIaOGMiqwEKVVI8VEivZjHv4hx58kl0yuMhg5FlCFCsnxg//B727NwtSkmxSMAd0vtv0xAvTsAs26bX8f23bzBPA/A1da219tALOfpNfbWuQI6NsGLq7bmrwHXO4Ag0+6ZEiO5KcpFArA+xl9Uw4YuAV619zeWvs4fQAy1NXyDXBwCIwWKXvd492Bzt7+PdPq7wdmHHKiSMerMAAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAAd0SU1FB+YCCBEvCyuXARIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAABEElEQVR42u3BMQEAAADCoPVPbQsvoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgLcB62UAATGAzeEAAAAASUVORK5CYII=');
-  const [img2Uri, setImg2Uri] = useState('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYwAAADYCAIAAAB3M0NIAAABhGlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV9TxSItInYQcchQnayIijhKFYtgobQVWnUwufQLmjQkKS6OgmvBwY/FqoOLs64OroIg+AHi6OSk6CIl/i8ptIjx4Lgf7+497t4BQqPCVLNrAlA1y0jFY2I2tyr2vEJAAP0YR0hipp5IL2bgOb7u4ePrXZRneZ/7c4SUvMkAn0g8x3TDIt4gntm0dM77xGFWkhTic+Ixgy5I/Mh12eU3zkWHBZ4ZNjKpeeIwsVjsYLmDWclQiaeJI4qqUb6QdVnhvMVZrdRY6578hcG8tpLmOs1hxLGEBJIQIaOGMiqwEKVVI8VEivZjHv4hx58kl0yuMhg5FlCFCsnxg//B727NwtSkmxSMAd0vtv0xAvTsAs26bX8f23bzBPA/A1da219tALOfpNfbWuQI6NsGLq7bmrwHXO4Ag0+6ZEiO5KcpFArA+xl9Uw4YuAV619zeWvs4fQAy1NXyDXBwCIwWKXvd492Bzt7+PdPq7wdmHHKiSMerMAAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAAd0SU1FB+YCCBEvCyuXARIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAABEElEQVR42u3BMQEAAADCoPVPbQsvoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgLcB62UAATGAzeEAAAAASUVORK5CYII=');
-  setImgUriG=function(c){setImgUri(c)};
-  setImg2UriG=function(c){setImg2Uri(c)};
-  //if(socket.connected) socket.emit('getState');
+function setAppStateG(state){
+	setAppStateG2(state);
+	for(var key of Object.keys(state)){
+		appState[key]=state[key];
+	}
+}
 
+class App extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			...appState,
+			currentTheme: Appearance.getColorScheme()==='dark',
+		};
+		setAppStateG2=this.setAppState.bind(this);
+	}
+	
+	componentWillUnmount()
+	{
+		setAppStateG2=function(){};
+	}
+	componentDidMount(){
+	}
 
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView contentInsetAdjustmentBehavior="automatic" style={{margin:1}}>
-		<View style={{backgroundColor: isDarkMode ? '#000' : '#fff'}}>
-	      <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:'#000'}} onPress={()=>{setInfoText('');confirmText();}}>
-		  	<Text style={{color:'#f00'}}>{infoText}</Text>
-		  </Pressable>
-		</View>
-		<View style={{backgroundColor: isDarkMode ? '#000' : '#fff',flexDirection: "row",flex:1}}>
-		  <View style={{ flex: 1,padding:3 }}>
-	        <Button title={gpsText} color="#55f" onPress={requestLocationPermission}>
-		    </Button>
-		  </View>
-          <View style={{ flex: 1 ,padding:1}}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:srt1col}} onPress={socketSrt1mute}>
-		      <Text style={srt1mutecol?{...styles.text,color:srt1mutecol}:styles.text}>{srt1Text}</Text>
-		    </Pressable>
-		  </View>
-      	  <View style={{ flex: 1, padding:1 }}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:srt2col}} onPress={socketSrt2mute}>
-		      <Text style={srt2mutecol?{...styles.text,color:srt2mutecol}:styles.text}>{srt2Text}</Text>
-		    </Pressable>
-		  </View>
-        </View>
-		<View style={{backgroundColor: isDarkMode ? '#000' : '#fff',flexDirection: "row",flex:1}}>
-		  <View style={{ flex: 1,padding:1 }}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:mapcol}} onPress={socketMap}>
-		      <Text style={styles.text}>Map</Text>
-		    </Pressable>
-		  </View>
-          <View style={{ flex: 1 ,padding:1}}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:clearcol}} onPress={socketMapClear}>
-		      <Text style={styles.text}>Clear</Text>
-		    </Pressable>
-		  </View>
-		  <View style={{ flex: 1,padding:1 }}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:map2col}} onPress={socketMap2}>
-		      <Text style={styles.text}>Map2</Text>
-		    </Pressable>
-		  </View>
-          <View style={{ flex: 1 ,padding:1}}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:clear2col}} onPress={socketMap2Clear}>
-		      <Text style={styles.text}>Clear2</Text>
-		    </Pressable>
-		  </View>
-		</View>
-		<View style={{backgroundColor: isDarkMode ? '#000' : '#fff',flexDirection: "row",flex:1}}>
-		  <View style={{ flex: 1,padding:1 }}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:introcol}} onPress={socketIntro}>
-		      <Text style={styles.text}>Intro</Text>
-		    </Pressable>
-		  </View>
-      	  <View style={{ flex: 1, padding:1 }}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:extrocol}} onPress={socketExtro}>
-		      <Text style={styles.text}>Extro</Text>
-		    </Pressable>
-		  </View>
-      	  <View style={{ flex: 1, padding:1 }}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:tweetcol}} onPress={socketTweet}>
-		      <Text style={styles.text}>Tweet</Text>
-		    </Pressable>
-		  </View>
-        </View>
-		<View style={{backgroundColor: isDarkMode ? '#000' : '#fff',flexDirection: "row",flex:1}}>
-		  <View style={{ flex: 1,padding:1 }}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:rtmp1col}} onPress={socketRtmp1}>
-		      <Text style={styles.text}>RTMP1</Text>
-		    </Pressable>
-		  </View>
-      	  <View style={{ flex: 1, padding:1 }}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:rtmp2col}} onPress={socketRtmp2}>
-		      <Text style={styles.text}>{rtmp2Text}</Text>
-		    </Pressable>
-		  </View>
-          <View style={{ flex: 1 ,padding:1}}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:rtmp3col}} onPress={socketRtmp3}>
-		      <Text style={styles.text}>RTMP3</Text>
-		    </Pressable>
-		  </View>
-          <View style={{ flex: 1 ,padding:1}}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:reccol}} onPress={socketRec}>
-		      <Text style={styles.text}>Rec</Text>
-		    </Pressable>
-		  </View>
-        </View>
-		<View style={{backgroundColor: isDarkMode ? '#000' : '#fff',flexDirection: "row",flex:1}}>
-		  <View style={{ flex: 1,padding:1 }}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:scene1col}} onPress={socketScene1}>
-		      <Text style={styles.text}>1</Text>
-		    </Pressable>
-		  </View>
-      	  <View style={{ flex: 1, padding:1 }}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:scene2col}} onPress={socketScene2}>
-		      <Text style={styles.text}>2</Text>
-		    </Pressable>
-		  </View>
-          <View style={{ flex: 1 ,padding:1}}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:sceneMixcol}} onPress={socketSceneMix}>
-		      <Text style={styles.text}>Mix</Text>
-		    </Pressable>
-		  </View>
-        </View>
-		<View style={{backgroundColor: isDarkMode ? '#000' : '#fff',flexDirection: "row",flex:1}}>
-      	  <View style={{ flex: 1, padding:1 }}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:sceneMix1col}} onPress={socketSceneMix1}>
-		      <Text style={styles.text}>Mix1</Text>
-		    </Pressable>
-		  </View>
-      	  <View style={{ flex: 1, padding:1 }}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:sceneMix2col}} onPress={socketSceneMix2}>
-		      <Text style={styles.text}>Mix2</Text>
-		    </Pressable>
-		  </View>
-          <View style={{ flex: 1 ,padding:1}}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:sceneMixNonecol}} onPress={socketSceneMixNone}>
-		      <Text style={styles.text}>None</Text>
-		    </Pressable>
-		  </View>
-        </View>
-		<View style={{backgroundColor: isDarkMode ? '#000' : '#fff',flexDirection: "row",flex:1}}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 0,paddingHorizontal: 0,borderRadius: 0,elevation: 0}} onPress={socketShot}>
-				<Image
-					style={{width: 198,height: 108}}
-					source={{
-						uri: imgUri
-					}}
-				/>
-		    </Pressable>
-        </View>
-		<View style={{backgroundColor: isDarkMode ? '#000' : '#fff',flexDirection: "row",flex:1}}>
-	        <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 0,paddingHorizontal: 0,borderRadius: 0,elevation: 0}} onPress={socketAudioLevel}>
-				<Image
-					style={{width: 198,height: 108}}
-					source={{
-						uri: img2Uri
-					}}
-				/>
-		    </Pressable>
-        </View>
-		<View style={{backgroundColor: isDarkMode ? '#000' : '#fff',flexDirection: "row",flex:1}}>
-      	  <View style={{ flex: 1, padding:1 }}>
-	         <Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:'#55f'}} onPress={function(){gLoggedin=false;setLoggedInG(false)}}>
-		      <Text style={styles.text}>Set Server</Text>
-		    </Pressable>
-		  </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
+	setAppState(state){
+		this.setState(state);
+	}
+
+	render() {
+		const backgroundStyle = {userSelect: 'none'};
+		
+		return (
+			<SafeAreaView style={backgroundStyle}>
+				<StatusBar barStyle={this.state.currentTheme ? 'light-content' : 'dark-content'} />
+				<ScrollView contentInsetAdjustmentBehavior="automatic" style={{margin:1}}>
+					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff'}}>
+						<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:'#000'}} onPress={()=>{confirmText();}}>
+							<Text style={{color:'#f00'}}>{this.state.infoText}</Text>
+						</Pressable>
+					</View>
+					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
+						<View style={{ flex: 1,padding:3 }}>
+							<Button title={this.state.gpsText} color="#55f" onPress={requestLocationPermission}>
+							</Button>
+						</View>
+						<View style={{ flex: 1 ,padding:3}}>
+							<Button title={this.state.srt1text + this.state.srt1mutetext} color={this.state.srt1col} onPress={socketSrt1mute}>
+							</Button>
+						</View>
+						<View style={{ flex: 1 ,padding:3}}>
+							<Button title={this.state.srt2text + this.state.srt2mutetext} color={this.state.srt2col} onPress={socketSrt2mute}>
+							</Button>
+						</View>
+					</View>
+					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
+						<View style={{ flex: 1,padding:1 }}>
+							<TouchableHighlight style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.mapcol}} onPress={socketMap}>
+								<Text style={styles.text}>Map</Text>
+							</TouchableHighlight>
+						</View>
+						<View style={{ flex: 1 ,padding:1}}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.clearcol}} onPress={socketMapClear}>
+								<Text style={styles.text}>Clear</Text>
+							</Pressable>
+						</View>
+						<View style={{ flex: 1,padding:1 }}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.map2col}} onPress={socketMap2}>
+								<Text style={styles.text}>Map2</Text>
+							</Pressable>
+						</View>
+						<View style={{ flex: 1 ,padding:1}}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.clear2col}} onPress={socketMap2Clear}>
+								<Text style={styles.text}>Clear2</Text>
+							</Pressable>
+						</View>
+					</View>
+					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
+						<View style={{ flex: 1,padding:1 }}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.introcol}} onPress={socketIntro}>
+								<Text style={styles.text}>Intro</Text>
+							</Pressable>
+						</View>
+						<View style={{ flex: 1, padding:1 }}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.extrocol}} onPress={socketExtro}>
+								<Text style={styles.text}>Extro</Text>
+							</Pressable>
+						</View>
+						<View style={{ flex: 1, padding:1 }}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.tweetcol}} onPress={socketTweet}>
+								<Text style={styles.text}>Tweet</Text>
+							</Pressable>
+						</View>
+					</View>
+					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
+						<View style={{ flex: 1,padding:1 }}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.rtmp1col}} onPress={socketRtmp1}>
+								<Text style={styles.text}>RTMP1</Text>
+							</Pressable>
+						</View>
+						<View style={{ flex: 1, padding:1 }}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.rtmp2col}} onPress={socketRtmp2}>
+								<Text style={styles.text}>{this.state.rtmp2text}</Text>
+							</Pressable>
+						</View>
+						<View style={{ flex: 1 ,padding:1}}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.rtmp3col}} onPress={socketRtmp3}>
+								<Text style={styles.text}>RTMP3</Text>
+							</Pressable>
+						</View>
+						<View style={{ flex: 1 ,padding:1}}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.reccol}} onPress={socketRec}>
+								<Text style={styles.text}>Rec</Text>
+							</Pressable>
+						</View>
+					</View>
+					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
+						<View style={{ flex: 1,padding:1 }}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.scene1col}} onPress={socketScene1}>
+								<Text style={styles.text}>1</Text>
+							</Pressable>
+						</View>
+						<View style={{ flex: 1, padding:1 }}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.scene2col}} onPress={socketScene2}>
+								<Text style={styles.text}>2</Text>
+							</Pressable>
+						</View>
+						<View style={{ flex: 1 ,padding:1}}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.sceneMixcol}} onPress={socketSceneMix}>
+								<Text style={styles.text}>Mix</Text>
+							</Pressable>
+						</View>
+					</View>
+					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
+						<View style={{ flex: 1, padding:1 }}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.sceneMix1col}} onPress={socketSceneMix1}>
+								<Text style={styles.text}>Mix1</Text>
+							</Pressable>
+						</View>
+						<View style={{ flex: 1, padding:1 }}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.sceneMix2col}} onPress={socketSceneMix2}>
+								<Text style={styles.text}>Mix2</Text>
+							</Pressable>
+						</View>
+						<View style={{ flex: 1 ,padding:1}}>
+							<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:this.state.sceneMixNonecol}} onPress={socketSceneMixNone}>
+								<Text style={styles.text}>None</Text>
+							</Pressable>
+						</View>
+					</View>
+					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
+						<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 0,paddingHorizontal: 0,borderRadius: 0,elevation: 0}} onPress={socketShot}>
+							<Image
+								style={{width: 198,height: 108}}
+								source={{
+									uri: this.state.imgUri
+								}}
+							/>
+						</Pressable>
+					</View>
+					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
+						<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 0,paddingHorizontal: 0,borderRadius: 0,elevation: 0}} onPress={socketAudioLevel}>
+							<Image
+								style={{width: 198,height: 108}}
+								source={{
+									uri: this.state.img2Uri
+								}}
+							/>
+						</Pressable>
+					</View>
+					<View style={{backgroundColor: this.state.currentTheme ? '#000' : '#fff',flexDirection: "row",flex:1}}>
+						<View style={{ flex: 1, padding:3 }}>
+							<Button title="Settings" color="#55f" onPress={function(){console.log('aa');gLoggedin=false;setLoggedInG(false);}}>
+							</Button>
+						</View>
+					</View>
+				</ScrollView>
+			</SafeAreaView>
+		);
+	}
+}
+
+class Settings extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			currentTheme: Appearance.getColorScheme()==='dark',
+			url: storage_data?storage_data.ws:'',
+			statusText:''
+		};
+		this.url=storage_data?storage_data.ws:'';
+		setStatusTextG=this.setStatusText.bind(this);
+		setUrlStateG=this.setUrlState.bind(this);
+	}
+	
+	componentWillUnmount()
+	{
+		setStatusTextG=function(){};
+	}
+	componentDidMount(){
+	}
+
+	setStatusText(text){
+		this.setState({statusText:text});
+	}
+	setUrlState(url){
+		this.setState({url:url});
+	}
+	setUrl(url){
+		this.url=url;
+	}
+
+	render() {
+		const backgroundStyle = {userSelect: 'none'};
+	
+		return (
+			<SafeAreaView style={backgroundStyle}>
+				<StatusBar barStyle={this.state.currentTheme ? 'light-content' : 'dark-content'} />
+				<ScrollView contentInsetAdjustmentBehavior="automatic" style={{margin:1}}>
+					<View style={{flexDirection: "row",flex:1}}>
+						<View style={{ flex: 1,padding:12 }}>
+							<Text style={styles.text}>ObsCtrl Backend Hostname:</Text>
+						</View>
+					</View>
+					<View>
+						<TextInput
+							style={{...styles.input,backgroundColor:'#fff',color:'#000'}}
+							onChangeText={newText => this.setUrl(newText)}
+							defaultValue={this.state.url}
+						/>
+					</View>
+					<View style={{flexDirection: "row",flex:1}}>
+						<View style={{ flex: 1,padding:12 }}>
+							<Button title="OK" onPress={()=>{if (!isWebUri("https://"+this.url+":3334")) {this.setStatusText("Not a valid host: \""+this.url+"\"") }else{this.setStatusText("");setUrl(this.url)}}}>
+							</Button>
+						</View>
+						<View style={{ flex: 1,padding:12 }}>
+							<Button title="Cancel" onPress={()=>{if(socket && socket.connected)setLoggedInG(true)}}>
+							</Button>
+						</View>
+					</View>
+					<View style={{flexDirection: "row",flex:1}}>
+						<View style={{ flex: 1,padding:12 }}>
+							<Text style={{...styles.text,color:'#f00'}}>{this.state.statusText}</Text>
+						</View>
+					</View>
+				</ScrollView>
+			</SafeAreaView>
+		);
+	}
+}
+
+class Main extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			isLoggedIn: false,
+		};
+		setLoggedInG=this.setLoggedIn.bind(this);
+	}
+
+	setLoggedIn(c){
+		this.setState({isLoggedIn:c});
+	}
+
+	render() {
+		let {isLoggedIn} = this.state;
+		let setting = this.setting;
+		if (isLoggedIn) {
+			return (<App/>);
+		} else {
+			return (<Settings/>);
+		}
+	}
+}
 
 const styles = StyleSheet.create({
-  highlight: {
-    fontWeight: '700',
-  },
-  text: {
-    fontSize: 24
-  },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
+	highlight: {
+		fontWeight: '700',
+	},
+	text: {
+		fontSize: 24
+	},
+	input: {
+		height: 40,
+		margin: 12,
+		borderWidth: 1,
+		padding: 10,
+	},
 });
-
-function Main() {
-  
-  var loggedIn = false;
-  if(storage_data && storage_data.ws){
-    loggedIn = true;
-	if(!socket || !socket.connected){
-		connectSocket();
-		gLoggedin=true;
-	}
-  }
-
-  const [isLoggedIn, setLoggedIn] = useState(loggedIn);
-  setLoggedInG=function(c){
-    if(c){
-		connectSocket();
-	}else{
-	
-	}
-  	setLoggedIn(c)
-  };
-  
-  if (isLoggedIn) {
-    return <App />;
-  }
-  return <Settings />;
-}
 
 export default Main;
