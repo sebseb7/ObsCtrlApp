@@ -1029,7 +1029,7 @@ class App extends Component {
 							</PlattformedButton>
 						</View>
 					</View>
-					<View style={{flexDirection: "row",flex:1}}>
+					<View style={{flexDirection: "row",flex:1,padding:3}}>
 						<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 0,paddingHorizontal: 0,borderRadius: 0,elevation: 0}} onPress={socketShot}>
 							<Image
 								style={{width: 198,height: 108}}
@@ -1039,7 +1039,7 @@ class App extends Component {
 							/>
 						</Pressable>
 					</View>
-					<View style={{flexDirection: "row",flex:1}}>
+					<View style={{flexDirection: "row",flex:1,padding:3}}>
 						<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 0,paddingHorizontal: 0,borderRadius: 0,elevation: 0}} onPress={socketAudioLevel}>
 							<Image
 								style={{width: 198,height: 108}}
