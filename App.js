@@ -13,6 +13,7 @@ import {
 	View,
 	Image,
 	Pressable,
+	BackHandler,
 	TouchableOpacity,
 	TouchableNativeFeedback,
 	Platform
@@ -27,6 +28,11 @@ import { isWebUri } from 'valid-url';
 const io = require("socket.io-client");
 import { LogBox } from 'react-native';
 LogBox.ignoreLogs(['new NativeEventEmitter']);
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer,createNavigationContainerRef   } from '@react-navigation/native';
+const Stack = createNativeStackNavigator();
+import {enableScreens} from 'react-native-screens';
+enableScreens();
 
 const uniqueId = uuidv4();
 
@@ -40,7 +46,7 @@ var setAppStateG2=function(){};
 var setStatusTextG;
 var setUrlStateG;
 var setSizeStateG;
-var setLoggedInG;
+var setLoggedInG=function(){};
 
 var srt1on = false;
 var srt2on = false;
@@ -617,7 +623,7 @@ function connectSocket() {
 				newAppState.sceneMixNonecol='#55f';
 			}
 			else if(state.sceneMode == 31){
-				sceneMode=3;
+				sceneMode=31;
 				newAppState.scene1col='#55f';
 				newAppState.scene2col='#55f';
 				newAppState.sceneMixcol='#55f';
@@ -626,7 +632,7 @@ function connectSocket() {
 				newAppState.sceneMixNonecol='#55f';
 			}
 			else if(state.sceneMode == 32){
-				sceneMode=3;
+				sceneMode=32;
 				newAppState.scene1col='#55f';
 				newAppState.scene2col='#55f';
 				newAppState.sceneMixcol='#55f';
@@ -760,6 +766,7 @@ var watchId = null;
 var gLoggedin = false;
 
 const setUrl = function(url) {
+	if(!storage_data)storage_data = {};
 	storage_data.ws = url;
 	AsyncStorage.setItem('obsctrl_data',JSON.stringify(storage_data));
 	console.log(url);
@@ -767,6 +774,7 @@ const setUrl = function(url) {
 	connectSocket();
 }
 const setSize = function(size) {
+	if(!storage_data)storage_data = {};
 	storage_data.buttonSize = size;
 	AsyncStorage.setItem('obsctrl_data',JSON.stringify(storage_data));
 }
@@ -913,12 +921,10 @@ class App extends Component {
 	}
 
 	render() {
-		const backgroundStyle = {backgroundColor:'#000',flex:1,userSelect: 'none'};
+		const backgroundStyle = {backgroundColor:'#121212',flex:1,userSelect: 'none',margin:0};
 		
 		return (
-			<SafeAreaView style={backgroundStyle}>
-				<StatusBar barStyle={this.state.currentTheme ? 'light-content' : 'dark-content'} />
-				<ScrollView contentInsetAdjustmentBehavior="automatic" style={{margin:1}}>
+			<ScrollView style={backgroundStyle}>
 					<View>
 						<Pressable style={{alignItems: 'center',justifyContent: 'center',paddingVertical: 2,paddingHorizontal: 0,borderRadius: 14,elevation: 3,backgroundColor:'#000'}} onPress={()=>{confirmText();}}>
 							<Text style={{color:'#f00'}}>{this.state.infoText}</Text>
@@ -1063,8 +1069,7 @@ class App extends Component {
 							</PlattformedButton>
 						</View>
 					</View>
-				</ScrollView>
-			</SafeAreaView>
+			</ScrollView>
 		);
 	}
 }
@@ -1139,13 +1144,11 @@ class Settings extends Component {
 	}
 
 	render() {
-		const backgroundStyle = {flex:1,userSelect: 'none'};
+		const backgroundStyle = {flex:1,userSelect: 'none',margin:0};
 	
 		return (
 			<ThemeProvider theme={this.state.currentTheme === 'dark' ? darkTheme : lightTheme}>
-				<StyledSafeAreaView style={backgroundStyle}>
-					<StatusBar style="auto"/>
-					<ScrollView contentInsetAdjustmentBehavior="automatic" style={{margin:1}}>
+			<StyledScrollView style={backgroundStyle}>
 						<View style={{flexDirection: "row",flex:1}}>
 							<View style={{ flex: 1,padding:12 }}>
 								<StyledText style={styles.text}>ObsCtrl Backend Hostname:</StyledText>
@@ -1188,8 +1191,7 @@ class Settings extends Component {
 								<Text style={{...styles.text,color:'#f00'}}>{this.state.statusText}</Text>
 							</View>
 						</View>
-					</ScrollView>
-				</StyledSafeAreaView>
+					</StyledScrollView>
 			</ThemeProvider>
 		);
 	}
@@ -1210,7 +1212,6 @@ class Main extends Component {
 
 	render() {
 		let {isLoggedIn} = this.state;
-		let setting = this.setting;
 		if (isLoggedIn) {
 			return (<App/>);
 		} else {
@@ -1219,12 +1220,54 @@ class Main extends Component {
 	}
 }
 
+
+class MyStack extends Component {
+	constructor(props) {
+		super(props);
+		setLoggedInG=this.setLoggedIn.bind(this);
+		this.navigationRef = createNavigationContainerRef();
+	}
+	componentDidMount(){
+		this.mounted=true;
+		if(this.navigateTo) this.navigationRef.navigate(this.navigateTo);
+	}
+	setLoggedIn(c){
+		if(this.mounted){
+			if(c){
+				this.navigationRef.navigate("App");
+			}else{
+				this.navigationRef.navigate("Settings");
+			}
+		}else{
+			if(c){
+				this.navigateTo = "App";
+			}else{
+				this.navigateTo = "Settings";
+			}
+		}
+	}
+	render() {
+		return (
+			<NavigationContainer ref={this.navigationRef}>
+				<Stack.Navigator screenOptions={{ headerShown: false }}>
+					<Stack.Screen name="Settings" component={Settings} />
+					<Stack.Screen name="App" component={App} />
+				</Stack.Navigator>
+			</NavigationContainer>
+		);
+	}
+}
 const StyledSafeAreaView = styled.SafeAreaView`
+	background-color: ${props => props.theme.background};
+`;
+const StyledScrollView = styled.ScrollView`
 	background-color: ${props => props.theme.background};
 `;
 const StyledText = styled.Text`
 	color: ${props => props.theme.foreground};
 `;
+
+
 
 const styles = StyleSheet.create({
 	text: {
@@ -1255,4 +1298,19 @@ const lightTheme = {
 	foreground: "#000",
 }
 
-export default Main;
+
+class RootComponent extends Component {
+	constructor(props) {
+		super(props);
+	}
+
+	render() {
+		if(Platform.OS=='web'){
+			return <Main/>;
+		}else if(Platform.OS=='android'){
+			return <MyStack/>;
+		}
+	}
+}
+export default RootComponent;
+
